@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Face Recognition Dashboard</title>
+    <!-- Import Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <header class="app-header">
+            <div class="logo-section">
+                <div class="pulse-indicator"></div>
+                <h1>Face Re-Identification Live Console</h1>
+            </div>
+            <div class="connection-status" id="status-badge">
+                <span class="dot red"></span>
+                <span class="text">Server Offline</span>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Layout -->
+        <main class="dashboard-grid">
+            
+            <!-- Left Side: Live Feed -->
+            <section class="card viewport-card">
+                <div class="card-header">
+                    <h2>Live Webcam Stream</h2>
+                    <span class="badge" id="stats-fps">0.0 FPS</span>
+                </div>
+                <div class="viewport-wrapper">
+                    <!-- Hidden video element streaming webcam -->
+                    <video id="webcam" autoplay playsinline muted></video>
+                    <!-- Visible canvas overlays bounding boxes and stream -->
+                    <canvas id="canvas-overlay"></canvas>
+                    
+                    <div class="viewport-placeholder" id="viewport-placeholder">
+                        <svg class="camera-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+                        </svg>
+                        <p>Camera Stream Paused</p>
+                        <button class="btn btn-primary" id="btn-start-camera">Enable Camera</button>
+                    </div>
+                </div>
+                <div class="viewport-controls">
+                    <button class="btn btn-secondary" id="btn-toggle-camera" disabled>Stop Feed</button>
+                    <div class="latency-indicator">Latency: <span id="stats-latency">0 ms</span></div>
+                </div>
+            </section>
+
+            <!-- Right Side: Control Panel & Logs -->
+            <div class="sidebar-column">
+                
+                <!-- Controls & Parameters -->
+                <section class="card config-card">
+                    <h2>Configuration</h2>
+                    
+                    <div class="control-group">
+                        <div class="control-header">
+                            <label for="threshold-slider">Confidence Threshold</label>
+                            <span class="value" id="threshold-val">0.43</span>
+                        </div>
+                        <input type="range" id="threshold-slider" min="0.0" max="1.0" step="0.01" value="0.43" class="slider">
+                        <p class="help-text">Filters out strangers (Unknown) below this similarity score.</p>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Active Members (Database)</label>
+                        <div class="members-grid" id="members-list">
+                            <!-- Populated dynamically -->
+                            <div class="member-tag loading">Loading templates...</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Activity Log Console -->
+                <section class="card console-card">
+                    <div class="card-header">
+                        <h2>Live Detection Log</h2>
+                        <button class="btn btn-small" id="btn-clear-logs">Clear</button>
+                    </div>
+                    <div class="console-wrapper" id="console-logs">
+                        <div class="log-entry system">[SYSTEM] Web Application Initialized. Waiting for Camera Feed...</div>
+                    </div>
+                </section>
+
+            </div>
+
+        </main>
+    </div>
+    <script src="index.js"></script>
+</body>
+</html>
