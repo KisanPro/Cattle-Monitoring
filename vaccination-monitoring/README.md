@@ -1,20 +1,16 @@
-# Vaccination Monitoring & Health Records
+# vaccination_monitoring
 
-This module schedules vaccinations, logs historical administration, manages vaccine inventory, and issues push alerts to farmers or veterinary staff.
+A new Flutter project.
 
-## 🚀 Key Objectives
-* Automatically generate vaccination schedules for cattle based on age and season.
-* Send SMS/Push alerts for upcoming doses or booster shots.
-* Generate compliance reports for government livestock records.
+## Getting Started
 
-## 🛠️ Project Structure
-```text
-vaccination-monitoring/
-├── app/
-│   ├── routes/            # API endpoints for vaccination logs
-│   ├── controllers/       # Business logic (e.g., scheduler)
-│   └── models/            # Database schema representing vaccine records
-├── config/                # Environment variables and configs
-├── Dockerfile             # Containerization config
-└── main.py                # Server entrypoint
-```
+This project is a starting point for a Flutter application.
+
+A few resources to get you started if this is your first Flutter project:
+
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
