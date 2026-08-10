@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C++ build files
+.pio/
+build/
+bin/
+obj/
+*.o
+*.a
+*.so
+*.dylib
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Virtual environments
+venv/
+ENV/
+.env
+
+# System / IDE files
+.DS_Store
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Application secrets
+*.env
+config/secrets.json
+credentials.json
