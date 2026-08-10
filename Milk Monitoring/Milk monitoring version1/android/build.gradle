@@ -1,0 +1,62 @@
+subprojects {
+    buildscript {
+        repositories {
+            google()
+            mavenCentral()
+        }
+        configurations.all {
+            resolutionStrategy {
+                force 'com.android.tools.build:gradle:8.3.0'
+                force 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22'
+            }
+        }
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    configurations.all {
+        resolutionStrategy {
+            force 'androidx.annotation:annotation:1.7.0'
+            force 'androidx.annotation:annotation-jvm:1.7.0'
+            force 'com.google.firebase:firebase-bom:34.12.0'
+            force 'com.google.firebase:firebase-common:22.0.1'
+            force 'com.google.firebase:firebase-firestore:26.2.0'
+            force 'com.google.firebase:firebase-components:19.0.0'
+            force 'com.google.firebase:firebase-annotations:17.0.0'
+            force 'com.google.firebase:firebase-database-collection:18.0.1'
+            force 'com.google.firebase:firebase-appcheck-interop:17.0.0'
+            force 'com.google.firebase:firebase-auth-interop:19.0.2'
+            force 'com.google.firebase:protolite-well-known-types:18.0.1'
+            force 'org.jetbrains.kotlin:kotlin-stdlib:1.9.22'
+            force 'org.jetbrains.kotlin:kotlin-stdlib-common:1.9.22'
+            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.20'
+            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.20'
+            force 'org.jetbrains.kotlin:kotlin-reflect:1.9.20'
+            force 'com.google.errorprone:error_prone_annotations:2.18.0'
+        }
+    }
+}
+
+subprojects {
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+}
+
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
