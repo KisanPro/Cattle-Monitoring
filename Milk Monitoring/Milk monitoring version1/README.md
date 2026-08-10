@@ -4,7 +4,7 @@ A professional, feature-rich Flutter application designed for dairy farmers and 
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 * **Session-wise Milk Logging**: Record precise yield (in liters), Fat percentage (e.g., 4.5%), and Solids-Not-Fat (SNF) percentage (e.g., 8.5%) for specific cattle, categorized by milking session (Morning/Evening).
 * **Robust Analytics Dashboard**: Visual summary of daily total production, morning vs. evening splits, rolling weekly/monthly yields, average daily yield, and identifies peak production days.
@@ -15,7 +15,7 @@ A professional, feature-rich Flutter application designed for dairy farmers and 
 
 ---
 
-## 🛠️ Tech Stack & Dependencies
+## Tech Stack & Dependencies
 
 * **Framework**: [Flutter SDK](https://flutter.dev/) (SDK version: `>=3.4.0 <4.0.0`)
 * **State Management**: [Provider](https://pub.dev/packages/provider) — clean, predictable state management using ChangeNotifier architecture.
@@ -26,7 +26,7 @@ A professional, feature-rich Flutter application designed for dairy farmers and 
 
 ---
 
-## 📂 Architecture & Directory Structure
+## Architecture & Directory Structure
 
 The module follows a clean, feature-first structure:
 
@@ -64,7 +64,7 @@ lib/
 
 ---
 
-## ⚙️ Setup & Installation Instructions
+## Setup & Installation Instructions
 
 ### Prerequisites
 * Flutter SDK installed (v3.4.0 or higher)
