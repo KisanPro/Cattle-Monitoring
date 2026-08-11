@@ -1,0 +1,18 @@
+# Ignore deep learning checkpoints and weights
+best_checkpoint.pth
+*.pth
+*.pt
+*.ckpt
+
+# Ignore Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore temporary embeddings and database caches
+embeddings_db.pkl
+*.pkl
+
+# Ignore IDE settings
+.idea/
+.vscode/

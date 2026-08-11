@@ -1,0 +1,85 @@
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
+
+def trustAllCertificates() {
+    try {
+        def trustAllCerts = [
+            new X509TrustManager() {
+                java.security.cert.X509Certificate[] getAcceptedIssuers() { return null }
+                void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
+                void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {}
+            }
+        ] as TrustManager[]
+
+        def sc = SSLContext.getInstance("SSL")
+        sc.init(null, trustAllCerts, new java.security.SecureRandom())
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory())
+        
+        def allHostsValid = new javax.net.ssl.HostnameVerifier() {
+            boolean verify(String hostname, javax.net.ssl.SSLSession session) { return true }
+        }
+        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid)
+    } catch (Exception e) {
+        // Ignore
+    }
+}
+
+trustAllCertificates()
+
+subprojects {
+    buildscript {
+        repositories {
+            google()
+            mavenCentral()
+        }
+        configurations.all {
+            resolutionStrategy {
+                force 'com.android.tools.build:gradle:8.3.0'
+                force 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22'
+                force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'
+                force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
+                force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
+                force 'org.jetbrains.kotlin:kotlin-stdlib-common:1.8.22'
+            }
+        }
+    }
+    
+    configurations.all {
+        resolutionStrategy {
+            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'
+            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
+            force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
+            force 'org.jetbrains.kotlin:kotlin-stdlib-common:1.8.22'
+        }
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    ext.kotlin_version = '1.8.22'
+}
+
+subprojects {
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+}
+
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
