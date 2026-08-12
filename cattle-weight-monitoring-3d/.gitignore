@@ -1,0 +1,20 @@
+# Ignore large binary files
+*.apk
+*.pth
+*.pt
+*.glb
+
+# Ignore Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore Flutter build artifacts
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+
+# Ignore IDE settings
+.idea/
+.vscode/

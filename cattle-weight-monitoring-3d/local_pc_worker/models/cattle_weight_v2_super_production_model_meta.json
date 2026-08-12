@@ -1,0 +1,23 @@
+{
+  "feature_names": [
+    "OBL",
+    "WH",
+    "HG",
+    "HL",
+    "vol_index",
+    "area_index",
+    "girth_height",
+    "length_height",
+    "hip_height",
+    "girth_hip",
+    "log_OBL",
+    "log_WH",
+    "log_HG",
+    "log_HL",
+    "Section_Calf",
+    "Section_Dairy",
+    "Section_Beef"
+  ],
+  "log_y": true,
+  "n_features": 17
+}
