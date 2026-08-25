@@ -1,0 +1,10 @@
+# Ignore Flutter build caches and files
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Ignore IDE configurations
+.idea/
+.vscode/
+*.iml
