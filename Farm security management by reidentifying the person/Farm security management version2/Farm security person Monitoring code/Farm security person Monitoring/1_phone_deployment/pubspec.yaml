@@ -1,0 +1,27 @@
+name: kisan_face_register_app
+description: "Dedicated CattleVision Face Register Client."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  http: ^1.1.0
+  camera: ^0.10.5
+  intl: ^0.19.0
+  shared_preferences: ^2.2.2
+  minio: any
+  archive: ^3.6.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+

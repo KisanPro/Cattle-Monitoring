@@ -1,0 +1,17 @@
+# Ignore Flutter build caches and files
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Ignore PyTorch model checkpoints
+*.pth
+*.pt
+
+# Ignore local mock S3 storage video/image uploads
+s3_storage/
+
+# Ignore IDE configurations
+.idea/
+.vscode/
+*.iml
