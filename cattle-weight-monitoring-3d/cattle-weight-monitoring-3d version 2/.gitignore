@@ -1,0 +1,17 @@
+# Ignore Flutter build caches and files
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Ignore compiled binaries (APKs)
+*.apk
+
+# Ignore massive datasets (which are hosted on Google Drive or locally on F:)
+Cattle Keypoints detection Training Code/dataset/
+Dataset/India Cattle side and back view images/
+
+# Ignore IDE configurations
+.idea/
+.vscode/
+*.iml

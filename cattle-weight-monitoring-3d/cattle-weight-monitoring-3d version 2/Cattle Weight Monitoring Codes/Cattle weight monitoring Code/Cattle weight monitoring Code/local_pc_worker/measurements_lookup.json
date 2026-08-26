@@ -1,0 +1,810 @@
+[
+  {
+    "obl": 161.0,
+    "wh": 124.0,
+    "hg": 190.0,
+    "hl": 47.0,
+    "weight": 545.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 152.0,
+    "wh": 120.0,
+    "hg": 183.0,
+    "hl": 43.0,
+    "weight": 507.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 151.0,
+    "wh": 124.0,
+    "hg": 179.0,
+    "hl": 41.0,
+    "weight": 450.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 174.0,
+    "wh": 129.0,
+    "hg": 202.0,
+    "hl": 50.0,
+    "weight": 604.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 128.0,
+    "wh": 114.0,
+    "hg": 176.0,
+    "hl": 41.0,
+    "weight": 448.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 138.0,
+    "wh": 120.0,
+    "hg": 180.0,
+    "hl": 42.0,
+    "weight": 450.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 162.0,
+    "wh": 124.0,
+    "hg": 182.0,
+    "hl": 45.0,
+    "weight": 495.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 154.0,
+    "wh": 119.0,
+    "hg": 174.0,
+    "hl": 41.0,
+    "weight": 434.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 142.0,
+    "wh": 115.0,
+    "hg": 170.0,
+    "hl": 42.0,
+    "weight": 400.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 156.0,
+    "wh": 118.0,
+    "hg": 180.0,
+    "hl": 44.0,
+    "weight": 467.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 145.0,
+    "wh": 118.0,
+    "hg": 190.0,
+    "hl": 44.0,
+    "weight": 466.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 138.0,
+    "wh": 112.0,
+    "hg": 173.0,
+    "hl": 42.0,
+    "weight": 362.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 151.0,
+    "wh": 122.0,
+    "hg": 189.0,
+    "hl": 46.0,
+    "weight": 444.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 152.0,
+    "wh": 121.0,
+    "hg": 181.0,
+    "hl": 46.0,
+    "weight": 441.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 157.0,
+    "wh": 121.0,
+    "hg": 193.0,
+    "hl": 50.0,
+    "weight": 497.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 127.0,
+    "wh": 116.0,
+    "hg": 171.0,
+    "hl": 37.0,
+    "weight": 409.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 138.0,
+    "wh": 117.0,
+    "hg": 168.0,
+    "hl": 41.0,
+    "weight": 371.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 153.0,
+    "wh": 119.0,
+    "hg": 176.0,
+    "hl": 41.0,
+    "weight": 434.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 138.0,
+    "wh": 115.0,
+    "hg": 173.0,
+    "hl": 44.0,
+    "weight": 367.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 138.0,
+    "wh": 112.0,
+    "hg": 173.0,
+    "hl": 42.0,
+    "weight": 362.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 142.0,
+    "wh": 118.0,
+    "hg": 174.0,
+    "hl": 43.0,
+    "weight": 403.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 142.0,
+    "wh": 120.0,
+    "hg": 175.0,
+    "hl": 45.0,
+    "weight": 440.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 138.0,
+    "wh": 112.0,
+    "hg": 173.0,
+    "hl": 44.0,
+    "weight": 362.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 144.0,
+    "wh": 122.0,
+    "hg": 186.0,
+    "hl": 44.0,
+    "weight": 445.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 138.0,
+    "wh": 112.0,
+    "hg": 173.0,
+    "hl": 44.0,
+    "weight": 362.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 156.0,
+    "wh": 118.0,
+    "hg": 180.0,
+    "hl": 44.0,
+    "weight": 467.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 138.0,
+    "wh": 123.0,
+    "hg": 180.0,
+    "hl": 42.0,
+    "weight": 450.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 167.0,
+    "wh": 128.0,
+    "hg": 192.0,
+    "hl": 29.0,
+    "weight": 601.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 154.0,
+    "wh": 118.0,
+    "hg": 194.0,
+    "hl": 45.0,
+    "weight": 550.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 170.0,
+    "wh": 131.0,
+    "hg": 197.0,
+    "hl": 50.0,
+    "weight": 608.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 155.0,
+    "wh": 120.0,
+    "hg": 186.0,
+    "hl": 44.0,
+    "weight": 486.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 159.0,
+    "wh": 125.0,
+    "hg": 183.0,
+    "hl": 48.0,
+    "weight": 465.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 138.0,
+    "wh": 123.0,
+    "hg": 180.0,
+    "hl": 42.0,
+    "weight": 450.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 157.0,
+    "wh": 121.0,
+    "hg": 193.0,
+    "hl": 50.0,
+    "weight": 497.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 168.0,
+    "wh": 128.0,
+    "hg": 201.0,
+    "hl": 49.0,
+    "weight": 602.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 142.0,
+    "wh": 118.0,
+    "hg": 174.0,
+    "hl": 43.0,
+    "weight": 400.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 170.0,
+    "wh": 130.0,
+    "hg": 209.0,
+    "hl": 51.0,
+    "weight": 612.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 161.0,
+    "wh": 125.0,
+    "hg": 193.0,
+    "hl": 49.0,
+    "weight": 559.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 171.0,
+    "wh": 128.0,
+    "hg": 204.0,
+    "hl": 50.0,
+    "weight": 617.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 146.0,
+    "wh": 100.0,
+    "hg": 167.0,
+    "hl": 41.0,
+    "weight": 342.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 145.0,
+    "wh": 121.0,
+    "hg": 190.0,
+    "hl": 44.0,
+    "weight": 479.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 144.0,
+    "wh": 122.0,
+    "hg": 186.0,
+    "hl": 44.0,
+    "weight": 445.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 167.0,
+    "wh": 128.0,
+    "hg": 192.0,
+    "hl": 29.0,
+    "weight": 601.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 161.0,
+    "wh": 125.0,
+    "hg": 193.0,
+    "hl": 49.0,
+    "weight": 565.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 146.0,
+    "wh": 100.0,
+    "hg": 167.0,
+    "hl": 41.0,
+    "weight": 341.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 148.0,
+    "wh": 100.0,
+    "hg": 167.0,
+    "hl": 41.0,
+    "weight": 353.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 157.0,
+    "wh": 125.0,
+    "hg": 192.0,
+    "hl": 51.0,
+    "weight": 511.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 155.0,
+    "wh": 120.0,
+    "hg": 186.0,
+    "hl": 44.0,
+    "weight": 486.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 146.0,
+    "wh": 100.0,
+    "hg": 167.0,
+    "hl": 41.0,
+    "weight": 342.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 167.0,
+    "wh": 130.0,
+    "hg": 190.0,
+    "hl": 50.0,
+    "weight": 600.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 138.0,
+    "wh": 123.0,
+    "hg": 180.0,
+    "hl": 42.0,
+    "weight": 450.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 150.0,
+    "wh": 118.0,
+    "hg": 176.0,
+    "hl": 46.0,
+    "weight": 443.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 154.0,
+    "wh": 118.0,
+    "hg": 194.0,
+    "hl": 45.0,
+    "weight": 550.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 151.0,
+    "wh": 122.0,
+    "hg": 189.0,
+    "hl": 46.0,
+    "weight": 444.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 157.0,
+    "wh": 121.0,
+    "hg": 193.0,
+    "hl": 50.0,
+    "weight": 497.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 150.0,
+    "wh": 118.0,
+    "hg": 175.0,
+    "hl": 42.0,
+    "weight": 408.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 146.0,
+    "wh": 100.0,
+    "hg": 167.0,
+    "hl": 41.0,
+    "weight": 346.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 159.0,
+    "wh": 125.0,
+    "hg": 183.0,
+    "hl": 48.0,
+    "weight": 465.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 168.0,
+    "wh": 128.0,
+    "hg": 201.0,
+    "hl": 49.0,
+    "weight": 602.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 157.0,
+    "wh": 121.0,
+    "hg": 193.0,
+    "hl": 50.0,
+    "weight": 497.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 167.0,
+    "wh": 128.0,
+    "hg": 192.0,
+    "hl": 29.0,
+    "weight": 601.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 161.0,
+    "wh": 125.0,
+    "hg": 193.0,
+    "hl": 49.0,
+    "weight": 586.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 170.0,
+    "wh": 131.0,
+    "hg": 197.0,
+    "hl": 50.0,
+    "weight": 608.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 173.0,
+    "wh": 130.0,
+    "hg": 200.0,
+    "hl": 48.0,
+    "weight": 610.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 144.0,
+    "wh": 122.0,
+    "hg": 186.0,
+    "hl": 44.0,
+    "weight": 445.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 146.0,
+    "wh": 100.0,
+    "hg": 167.0,
+    "hl": 41.0,
+    "weight": 346.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 155.0,
+    "wh": 120.0,
+    "hg": 186.0,
+    "hl": 44.0,
+    "weight": 486.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 171.0,
+    "wh": 128.0,
+    "hg": 204.0,
+    "hl": 50.0,
+    "weight": 617.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 155.0,
+    "wh": 120.0,
+    "hg": 183.0,
+    "hl": 44.0,
+    "weight": 512.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 174.0,
+    "wh": 137.0,
+    "hg": 221.0,
+    "hl": 49.0,
+    "weight": 644.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 161.0,
+    "wh": 125.0,
+    "hg": 193.0,
+    "hl": 49.0,
+    "weight": 586.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 156.0,
+    "wh": 114.0,
+    "hg": 189.0,
+    "hl": 46.0,
+    "weight": 567.0,
+    "source": "China_Yellow_Cattle"
+  },
+  {
+    "obl": 85.0,
+    "wh": 100.0,
+    "hg": 120.0,
+    "hl": 23.0,
+    "weight": 113.18,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 120.0,
+    "wh": 130.0,
+    "hg": 162.0,
+    "hl": 37.0,
+    "weight": 291.2,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 141.0,
+    "wh": 136.0,
+    "hg": 165.0,
+    "hl": 40.0,
+    "weight": 354.94,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 112.0,
+    "wh": 122.0,
+    "hg": 150.0,
+    "hl": 34.0,
+    "weight": 233.01,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 118.0,
+    "wh": 123.0,
+    "hg": 167.0,
+    "hl": 34.0,
+    "weight": 304.29,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 150.0,
+    "wh": 142.0,
+    "hg": 200.0,
+    "hl": 43.0,
+    "weight": 554.79,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 133.0,
+    "wh": 133.0,
+    "hg": 182.0,
+    "hl": 40.0,
+    "weight": 407.35,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 150.0,
+    "wh": 140.0,
+    "hg": 190.0,
+    "hl": 42.0,
+    "weight": 500.69,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 135.0,
+    "wh": 134.0,
+    "hg": 185.0,
+    "hl": 39.0,
+    "weight": 427.22,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 140.0,
+    "wh": 137.0,
+    "hg": 190.0,
+    "hl": 38.0,
+    "weight": 467.31,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 149.0,
+    "wh": 136.0,
+    "hg": 180.0,
+    "hl": 43.0,
+    "weight": 446.38,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 145.0,
+    "wh": 137.0,
+    "hg": 190.0,
+    "hl": 40.0,
+    "weight": 484.0,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 140.0,
+    "wh": 138.0,
+    "hg": 178.0,
+    "hl": 39.0,
+    "weight": 410.15,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 146.0,
+    "wh": 135.0,
+    "hg": 180.0,
+    "hl": 40.0,
+    "weight": 437.39,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 136.0,
+    "wh": 131.0,
+    "hg": 177.0,
+    "hl": 37.0,
+    "weight": 393.97,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 130.0,
+    "wh": 122.0,
+    "hg": 160.0,
+    "hl": 35.0,
+    "weight": 307.72,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 130.0,
+    "wh": 135.0,
+    "hg": 178.0,
+    "hl": 36.0,
+    "weight": 380.85,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 145.0,
+    "wh": 135.0,
+    "hg": 188.0,
+    "hl": 40.0,
+    "weight": 473.87,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 135.0,
+    "wh": 130.0,
+    "hg": 170.0,
+    "hl": 35.0,
+    "weight": 360.75,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 130.0,
+    "wh": 135.0,
+    "hg": 170.0,
+    "hl": 35.0,
+    "weight": 347.39,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 133.0,
+    "wh": 134.0,
+    "hg": 165.0,
+    "hl": 38.0,
+    "weight": 334.81,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 130.0,
+    "wh": 135.0,
+    "hg": 175.0,
+    "hl": 40.0,
+    "weight": 368.12,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 144.0,
+    "wh": 146.0,
+    "hg": 185.0,
+    "hl": 40.0,
+    "weight": 455.7,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 143.0,
+    "wh": 130.0,
+    "hg": 165.0,
+    "hl": 38.0,
+    "weight": 359.98,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 145.0,
+    "wh": 136.0,
+    "hg": 180.0,
+    "hl": 37.0,
+    "weight": 434.4,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 145.0,
+    "wh": 135.0,
+    "hg": 180.0,
+    "hl": 38.0,
+    "weight": 434.4,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 135.0,
+    "wh": 133.0,
+    "hg": 182.0,
+    "hl": 38.0,
+    "weight": 413.48,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 105.0,
+    "wh": 120.0,
+    "hg": 132.0,
+    "hl": 36.0,
+    "weight": 169.17,
+    "source": "India_Cattle"
+  },
+  {
+    "obl": 107.0,
+    "wh": 124.0,
+    "hg": 132.0,
+    "hl": 35.0,
+    "weight": 172.39,
+    "source": "India_Cattle"
+  }
+]

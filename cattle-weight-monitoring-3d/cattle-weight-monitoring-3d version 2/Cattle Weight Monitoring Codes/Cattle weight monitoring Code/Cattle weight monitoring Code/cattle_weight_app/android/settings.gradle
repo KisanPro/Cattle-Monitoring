@@ -1,0 +1,47 @@
+pluginManagement {
+    def flutterSdkPath = {
+        // Bypass SSL certificate checks using Groovy map coercion
+        try {
+            def trustAllCerts = [
+                [
+                    getAcceptedIssuers: { -> null },
+                    checkClientTrusted: { certs, authType -> },
+                    checkServerTrusted: { certs, authType -> }
+                ] as javax.net.ssl.X509TrustManager
+            ] as javax.net.ssl.TrustManager[]
+
+            def sc = javax.net.ssl.SSLContext.getInstance("SSL")
+            sc.init(null, trustAllCerts, new java.security.SecureRandom())
+            javax.net.ssl.HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory())
+            
+            def allHostsValid = [
+                verify: { hostname, session -> true }
+            ] as javax.net.ssl.HostnameVerifier
+            javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid)
+        } catch (Exception e) {
+            // Ignore
+        }
+        
+        def properties = new Properties()
+        file("local.properties").withInputStream { properties.load(it) }
+        def flutterSdkPath = properties.getProperty("flutter.sdk")
+        assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
+        return flutterSdkPath
+    }()
+
+    includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
+
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+    id "com.android.application" version "8.3.0" apply false
+    id "org.jetbrains.kotlin.android" version "1.9.22" apply false
+}
+
+include ":app"

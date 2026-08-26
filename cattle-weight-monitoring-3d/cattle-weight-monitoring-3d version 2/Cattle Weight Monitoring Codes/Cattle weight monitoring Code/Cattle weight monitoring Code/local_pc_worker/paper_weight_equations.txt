@@ -1,0 +1,44 @@
+Matches count: 43
+- for estimating the weight of youngstock, the ConvNets model proposed
+- (2021) for measuring the weight of pigs, and the
+- We evaluated the performance of the weight prediction models
+- histogram, where the 𝑥-axis represents the weight of cattle and the
+- 1, blue bars represent the manually measured actual weight values,
+- It is visually evident that our proposed LaWE model estimates weight
+- ing high-resolution images, thereby affecting performance in weight
+- smaller error range and higher precision in predicting the weight of
+- demonstrating a high degree of correlation with actual weights in
+- keypoint detection on the input image and estimated the body weight
+- Table 6 presents the estimated weight results after removing the
+- method on the estimation of cattle body weight, we employed a case
+- By comparing the actual heart girth and body weight of these cattle
+- and reliability of the heart girth measurement method in body weight
+- Table 7 details the actual and estimated girth and body weight
+- cattle (with body weights of 323 kg, 353 kg, 382 kg, and 400 kg),
+- five cattle of normal body type (with body weights of 479 kg, 545 kg,
+- 448 kg, 488 kg, and 535 kg), and one obese cattle (with a body weight
+- In terms of body weight estimation, the cattle with the largest
+- weight error in Dataset 1 was cattle number 41, with an error of
+- Importantly, all cattle’s weight errors were within the 3% error margin
+- in estimating cattle body weight, we used the following five different
+- cattle body weight of the two data sets under five circumstances
+- the estimated weight value of the test set and the true value, with the
+- comparison cases, when the input parameters of the weight estimation
+- of the LaWE model in cattle weight estimation tasks, we conducted
+- livestock weight have been extensively studied by scholars, these meth-
+- Dataset True heart girth (cm) Estimated heart girth (cm) MAE (cm) True weight (kg) Estimated weight (kg) MAE (kg)
+- approach for weight estimation but also offer valuable data support for
+- be lightweight, its operation may be limited on devices with very
+- V2, and LaWE—to estimate the weight from these photos, with the
+- 2%, failing to meet the industry standard of a weight error within
+- eration module, a lightweight multi-scale keypoint generation method
+- Dataset True weight (kg) Estimation weight (kg)
+- the Cattle Weight Prediction Network module, we design a lightweight
+- regression neural network that improves the accuracy of weight pre-
+- The weight of cattle can be
+- Automatic sheep weight estimation based
+- Image processing strategies for pig liveweight measurement: Updates and
+- Deep learning techniques for beef cattle body weight
+- Cattle weight estimation using
+- Estimating pig weight with digi-
+- Pig weight
