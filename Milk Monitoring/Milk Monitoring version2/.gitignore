@@ -1,0 +1,4 @@
+# Ignore compiled installer binaries exceeding file size limits
+kisan_pro_milk_monitoring.apk
+KisanPro_Universal_v1.0.apk
+milk_monitoring_debug.apk
