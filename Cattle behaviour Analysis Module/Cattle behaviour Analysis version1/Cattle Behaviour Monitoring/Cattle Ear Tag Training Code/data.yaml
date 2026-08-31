@@ -1,0 +1,9 @@
+# YOLO Dataset Configuration for Cattle Ear Tag Detection
+path: dataset
+train: train/images
+val: val/images
+test: test/images
+
+nc: 1
+names:
+  0: ear_tag

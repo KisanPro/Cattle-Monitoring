@@ -1,0 +1,54 @@
+# =========================================================
+# Cattle Ear Tag Detection & OCR Configuration
+# =========================================================
+
+paths:
+  # Models
+  default_detection_model: "models/best.pt"
+  pretrained_base_model: "yolov8n.pt"
+  
+  # Datasets
+  dataset_dir: "dataset"
+  train_images: "dataset/train/images"
+  val_images: "dataset/val/images"
+  test_images: "dataset/test/images"
+  data_yaml: "config/data.yaml"
+  
+  # Default test and output directories
+  default_input: "dataset/algo_test"
+  output_dir: "output"
+  results_dir: "output/results"
+
+detection:
+  img_size: 640
+  conf_threshold: 0.35
+  iou_threshold: 0.50
+  device: "auto"        # 'auto', '0', '1', 'cpu'
+  save_annotated: true
+  save_crops: false
+
+ocr:
+  languages: ["en"]
+  use_gpu: true
+  min_text_length: 2
+  conf_threshold: 0.30
+  preprocess:
+    resize_factor: 2.0
+    apply_clahe: true
+    denoise: true
+    adaptive_thresh: false
+
+training:
+  model: "yolov8n.pt"
+  data: "config/data.yaml"
+  epochs: 100
+  imgsz: 640
+  batch_size: 16
+  name: "cattle_ear_tag_best"
+  workers: 0           # 0 recommended on Windows to avoid DataLoader deadlock
+  device: "auto"
+  optimizer: "auto"
+  lr0: 0.01
+  lrf: 0.01
+  save: true
+  plots: true

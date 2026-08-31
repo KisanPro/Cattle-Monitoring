@@ -1,0 +1,10 @@
+Timestamp,Camera_ID,Entity_ID,Posture,Feeding,Duration_Sec
+13-07-2026 12:56:30 PM,cam3,Analysing_4,Standing,Feeding_Behaviour,60
+13-07-2026 12:56:33 PM,cam3,Analysing_5,Standing,Feeding_Behaviour,60
+13-07-2026 12:56:35 PM,cam3,A145,Standing,Feeding_Behaviour,60
+13-07-2026 12:57:26 PM,cam3,Analysing_4,Standing,Idle_Behaviour,60
+13-07-2026 12:57:33 PM,cam3,Analysing_7,Lying,Feeding_Behaviour,60
+13-07-2026 12:57:35 PM,cam3,A145,Standing,Feeding_Behaviour,60
+13-07-2026 12:59:28 PM,cam3,Analysing_9,Standing,Idle_Behaviour,60
+13-07-2026 12:59:30 PM,cam3,Analysing_10,Lying,Feeding_Behaviour,60
+13-07-2026 12:59:49 PM,cam3,Analysing_13,Standing,Idle_Behaviour,60

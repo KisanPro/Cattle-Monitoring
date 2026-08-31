@@ -1,0 +1,17 @@
+{
+    "cam1_url": "rtsp://admin:GeethaCam1234_@192.168.0.162:554/video/live?channel=1&subtype=0",
+    "cam2_ip": "192.168.0.112",
+    "cam2_user": "admin",
+    "cam2_pass": "GeethaCam1234_",
+    "cam2_path": "onvifsnapshot/media_service/snapshot?channel=1&subtype=0",
+    "cam2_mode": "https_snap",
+    "cam3_ip": "192.168.0.110",
+    "cam3_user": "admin",
+    "cam3_pass": "GeethaCam1234_",
+    "cam3_path": "onvifsnapshot/media_service/snapshot?channel=1&subtype=0",
+    "cam3_mode": "https_snap",
+    "user_name": "Farmer_Geetha",
+    "phone": "9876543210",
+    "farm_name": "Kisan_Gitam_Farm",
+    "hpc_url": "https://embedded-cited-painting-thompson.trycloudflare.com"
+}

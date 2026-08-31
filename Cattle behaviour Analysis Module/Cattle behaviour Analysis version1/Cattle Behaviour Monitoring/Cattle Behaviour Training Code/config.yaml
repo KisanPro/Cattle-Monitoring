@@ -1,0 +1,150 @@
+# ==============================================================
+# Cattle Behaviour Monitoring — Central Configuration
+# ==============================================================
+# All paths are relative to the project root.
+# Edit this file once; all scripts pick it up automatically.
+# ==============================================================
+
+# ---------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------
+paths:
+  # Raw videos to extract frames from
+  raw_videos_dir: "data/raw_videos"
+
+  # Cleaned, class-labelled images (pre-split)
+  cleaned_frames_dir: "data/cleaned_frames"
+
+  # Final train / val / test splits (ImageFolder layout)
+  dataset_dir: "Dataset"
+
+  # Where trained model weights are saved
+  weights_dir: "weights"
+
+  # Evaluation outputs (CSV, PNG)
+  results_dir: "results"
+
+  # Testing input and output directories
+  cattle_test_input_dir: "cattle_testing/cattle_input"
+  cattle_test_output_dir: "cattle_testing/cattle_output"
+
+# ---------------------------------------------------------------
+# Dataset
+# ---------------------------------------------------------------
+dataset:
+  # Behaviour classes (must match subfolder names exactly)
+  classes:
+    - drinking
+    - eating
+    - lying
+    - ruminating
+    - standing
+
+  # Train / val / test split ratios (must sum to 1.0)
+  split_ratios:
+    train: 0.70
+    val:   0.20
+    test:  0.10
+
+  # Standard image dimensions used throughout the pipeline
+  image_size: 224    # used during training & inference
+  raw_roi_size: 256  # used when extracting ROI frames from video
+
+# ---------------------------------------------------------------
+# Preprocessing
+# ---------------------------------------------------------------
+preprocessing:
+  # Classes to augment (typically under-represented ones)
+  augment_classes:
+    - lying
+    - ruminating
+    - drinking
+
+  # Augmentation parameters
+  augmentation:
+    horizontal_flip_p: 0.5
+    rotate_limit: 5
+    rotate_p: 0.5
+    brightness_limit: 0.1
+    contrast_limit: 0.1
+    color_jitter_p: 0.4
+    gauss_noise_var: [1, 5]
+    gauss_noise_p: 0.3
+    scale_limit: 0.05
+    scale_p: 0.4
+
+# ---------------------------------------------------------------
+# Detection (YOLO)
+# ---------------------------------------------------------------
+detection:
+  # YOLOv8 weights filename inside weights_dir
+  yolo_weights: "yolov8x.pt"
+  # COCO class ID for cow
+  cow_class_id: 19
+
+# ---------------------------------------------------------------
+# Behaviour Models (EfficientNetV2)
+# ---------------------------------------------------------------
+models:
+  backbone: "efficientnetv2_rw_s"
+
+  posture:
+    weights: "standing_lying.pt"
+    classes:
+      - Lying
+      - Standing
+    confidence_thresholds:
+      Lying: 0.60
+      Standing: 0.80
+
+  feeding:
+    weights: "food_idle_behavior.pt"
+    classes:
+      - Feeding_Behaviour
+      - Idle_Behaviour
+    confidence_thresholds:
+      Feeding_Behaviour: 0.40
+      Idle_Behaviour: 0.80
+
+  all_classes:
+    weights: "all_5_classes.pt"
+    classes:
+      - drinking
+      - eating
+      - lying
+      - ruminating
+      - standing
+
+# ---------------------------------------------------------------
+# Training Hyperparameters
+# ---------------------------------------------------------------
+training:
+  epochs: 20
+  batch_size: 16
+  learning_rate: 1.0e-4
+  weight_decay: 1.0e-5
+  drop_rate: 0.2
+  drop_path_rate: 0.1
+  num_workers: 0          # set to 4+ on Linux/Mac
+  pin_memory: true
+  early_stopping_patience: 6
+  lr_scheduler_patience: 3
+  lr_scheduler_factor: 0.5
+  accumulation_steps: 1
+  use_amp: true           # Automatic Mixed Precision (GPU only)
+  use_cuda: true
+  pretrained: true
+
+  # ImageNet normalisation stats
+  mean: [0.485, 0.456, 0.406]
+  std:  [0.229, 0.224, 0.225]
+
+# ---------------------------------------------------------------
+# Inference
+# ---------------------------------------------------------------
+inference:
+  font_scale: 0.9
+  font_thickness: 2
+  box_color_cow:    [0, 255, 0]
+  box_color_person: [255, 0, 0]
+  box_color_other:  [0, 165, 255]

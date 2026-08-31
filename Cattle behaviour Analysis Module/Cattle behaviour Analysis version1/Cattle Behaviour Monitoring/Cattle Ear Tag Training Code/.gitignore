@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyTorch & YOLO cache
+*.cache
+*.pt
+!models/best.pt
+!models/cattle_yolov8.pt
+!yolov8n.pt
+!yolo11n.pt
+
+# Training runs (keep directory structure if desired)
+runs/detect/predict*
+src/runs/
+
+# Testing and temporary output results (exclude generated images, keep dirs)
+output/test_run/
+output/results/*
+!output/results/.gitkeep
+testing_results/predict/*
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

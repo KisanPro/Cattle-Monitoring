@@ -1,0 +1,31 @@
+# Ignore Flutter build caches and files
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Ignore compiled binaries (APKs)
+*.apk
+
+# Ignore massive training datasets (hosted on Google Drive or locally on F:)
+dataset/
+Dataset/
+runs/
+
+# Ignore heavy PyTorch model weights checkpoints
+*.pt
+*.pth
+
+# Ignore large media output streams (hosted on Google Drive)
+*.mp4
+*.webm
+*.avi
+*.mkv
+
+# Ignore batch processor tarballs
+*.tar.gz
+
+# Ignore IDE configurations
+.idea/
+.vscode/
+*.iml

@@ -1,0 +1,3287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kisan CattleVision | YOLO 26 AI Edge Monitoring System</title>
+    <meta name="description" content="Kisan CattleVision — Real-time YOLO 26 AI-powered cattle monitoring with posture, feeding, ear-tag identification and per-cattle record storage.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #09090b;             /* Deep sleek black/gray */
+            --bg-2: #18181b;           /* Slightly lighter dark background */
+            --bg-3: #27272a;           /* Deeper dark structural bg */
+            --card: rgba(24, 24, 27, 0.6); /* Glassmorphism card */
+            --card-hover: rgba(39, 39, 42, 0.8);
+            --teal: #14b8a6;           /* Vibrant teal */
+            --teal-bright: #2dd4bf;    /* Neon teal */
+            --teal-dim: #0f766e;       /* Deep teal */
+            --teal-glow: rgba(45, 212, 191, 0.15); /* Vibrant teal glow */
+            --red: #f87171;            /* Bright red for dark mode */
+            --amber: #fbbf24;          /* Bright amber for dark mode */
+            --green: #4ade80;          /* Bright neon green */
+            --text: #f4f4f5;           /* Almost white text */
+            --text-2: #d4d4d8;         /* Light gray secondary text */
+            --text-muted: #a1a1aa;     /* Muted gray text */
+            --border: rgba(255, 255, 255, 0.08); /* Glass border */
+            --border-bright: rgba(45, 212, 191, 0.3);
+            --shadow: 0 12px 40px rgba(0, 0, 0, 0.6); /* Deep shadow */
+        }
+
+        body {
+            background: radial-gradient(circle at top left, #121f1e, #09090b 40%);
+            background-attachment: fixed;
+        }
+
+        .cam-card, .cattle-card, .strip-stat, .cattle-obs-detail {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background: var(--card) !important;
+            border: 1px solid var(--border) !important;
+        }
+
+        header {
+            background: rgba(9, 9, 11, 0.7) !important;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, var(--teal-bright), var(--teal)) !important;
+            color: #000 !important;
+        }
+
+        .cam-header { background: rgba(255, 255, 255, 0.03) !important; }
+        .cattle-card-header { background: rgba(255, 255, 255, 0.02) !important; }
+        .tab-bar { background: rgba(24, 24, 27, 0.4) !important; backdrop-filter: blur(8px); border-bottom: 1px solid var(--border) !important;}
+        .cattle-toolbar { background: transparent !important; }
+        .search-wrap input { background: rgba(255, 255, 255, 0.05) !important; color: white !important; }
+
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* ── HEADER ── */
+        header {
+            padding: 0.9rem 2rem;
+            background: #005c53;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header .logo-text h1 {
+            color: #ffffff !important;
+            font-size: 1.15rem;
+        }
+
+        header .logo-text span {
+            color: #b2dfdb !important;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--teal), var(--teal-dim));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 0 16px var(--teal-glow);
+        }
+
+        .logo-text h1 {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.01em;
+        }
+
+        .logo-text span {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .pill {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border: 1px solid rgba(178, 223, 219, 0.3);
+            background: rgba(0, 77, 64, 0.4);
+            color: #b2dfdb;
+        }
+
+        /* Fullscreen Stream View Overlay */
+        .fullscreen-view {
+            position: fixed;
+            inset: 0;
+            background: #040A0C;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .fullscreen-header {
+            padding: 1rem 2rem;
+            background: #005c53;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .fullscreen-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .fullscreen-logo h2 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .fullscreen-logo span {
+            font-size: 0.65rem;
+            color: #b2dfdb;
+            text-transform: uppercase;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        .fullscreen-back-btn {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .fullscreen-back-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .fullscreen-body {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+            background: radial-gradient(circle at center, #0B1D20 0%, #03080A 100%);
+        }
+
+        .fullscreen-feed-wrapper {
+            position: relative;
+            width: auto;
+            height: auto;
+            max-width: 95%;
+            max-height: 90vh;
+            aspect-ratio: 16/9;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255,255,255,0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .fullscreen-feed {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Hover play effect for camera cards */
+        .video-wrapper {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .video-wrapper:hover {
+            transform: scale(1.008);
+        }
+
+        .video-wrapper::after {
+            content: 'Click to expand stream';
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 92, 83, 0.85);
+            color: #ffffff;
+            font-size: 0.62rem;
+            font-weight: 700;
+            padding: 0.3rem 0.6rem;
+            border-radius: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            opacity: 0;
+            transition: opacity 0.25s, transform 0.25s;
+            pointer-events: none;
+            z-index: 5;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .video-wrapper:hover::after {
+            opacity: 1;
+        }
+
+        /* Behaviour progress bars on cattle cards */
+        .behaviour-graph-bar {
+            display: flex;
+            height: 14px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: rgba(0, 92, 83, 0.05);
+            margin: 0.8rem 0;
+            border: 1px solid var(--border);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .bar-segment {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .bar-legend {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+            border-top: 1px solid var(--border);
+            padding-top: 0.6rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--text-2);
+        }
+
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-color.lying { background: #EF9A9A; }
+        .legend-color.standing { background: #A5D6A7; }
+        .legend-color.feeding { background: var(--teal-bright); }
+        .legend-color.idle { background: #FFCC80; }
+
+        .pulse-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse 1.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%,100% { opacity: 0.6; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 8px var(--green); }
+        }
+
+        .icon-btn {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 0.4rem 0.85rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ── TAB BAR ── */
+        .tab-bar {
+            display: flex;
+            background: var(--bg-2);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            gap: 0.25rem;
+        }
+
+        .tab-btn {
+            padding: 0.85rem 1.5rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border: none;
+            background: none;
+            cursor: pointer;
+            position: relative;
+            letter-spacing: 0.02em;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0; right: 0;
+            height: 2px;
+            background: var(--teal-bright);
+            transform: scaleX(0);
+            transition: transform 0.2s;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .tab-btn.active {
+            color: var(--teal-bright);
+        }
+
+        .tab-btn.active::after {
+            transform: scaleX(1);
+        }
+
+        .tab-badge {
+            font-size: 0.6rem;
+            background: var(--teal-glow);
+            color: var(--teal);
+            border: 1px solid var(--border-bright);
+            padding: 0.1rem 0.4rem;
+            border-radius: 9999px;
+            font-weight: 700;
+        }
+
+        /* ── TAB PANELS ── */
+        .tab-panel { display: none; flex: 1; }
+        .tab-panel.active { display: flex; flex-direction: column; flex: 1; }
+
+        /* ── CAMERA GRID ── */
+        .grid-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            gap: 1.25rem;
+            padding: 1.5rem;
+        }
+
+        .cam-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow);
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+
+        .cam-card:hover {
+            border-color: var(--border-bright);
+            box-shadow: 0 12px 36px rgba(0, 40, 36, 0.12), 0 0 0 1px var(--teal-glow);
+        }
+
+        .cam-header {
+            padding: 0.7rem 1rem;
+            background: var(--bg-2);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cam-name {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .cam-stats {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--teal-bright);
+            background: var(--teal-glow);
+            padding: 0.15rem 0.55rem;
+            border-radius: 5px;
+            border: 1px solid var(--border-bright);
+        }
+
+        .cam-status-badge {
+            font-size: 0.62rem;
+            font-weight: 700;
+            padding: 0.2rem 0.55rem;
+            border-radius: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .cam-status-badge.online {
+            background: rgba(102,187,106,0.1);
+            color: var(--green);
+            border: 1px solid rgba(102,187,106,0.25);
+        }
+
+        .cam-status-badge.offline {
+            background: rgba(239,83,80,0.1);
+            color: var(--red);
+            border: 1px solid rgba(239,83,80,0.25);
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #040A0C;
+        }
+
+        .video-feed {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(5,12,15,0.96);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 10;
+        }
+
+        .spinner {
+            width: 28px; height: 28px;
+            border: 2px solid rgba(38,166,154,0.15);
+            border-top: 2px solid var(--teal-bright);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-txt {
+            font-size: 0.82rem;
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            color: #000000 !important;
+            background: #FEF08A;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            border: 2px solid #CA8A04;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* ── CATTLE RECORDS TAB ── */
+        #cattle-panel {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        /* Toolbar */
+        .cattle-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .search-wrap {
+            flex: 1;
+            min-width: 240px;
+            position: relative;
+        }
+
+        .search-wrap input {
+            width: 100%;
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.65rem 0.9rem 0.65rem 2.4rem;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-wrap input::placeholder { color: var(--text-muted); }
+        .search-wrap input:focus { border-color: var(--teal); }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .filter-btn {
+            padding: 0.65rem 1.1rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text-2);
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            border-color: var(--teal);
+            color: var(--teal-bright);
+            background: var(--teal-glow);
+        }
+
+        .refresh-btn {
+            padding: 0.65rem 1.1rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-bright);
+            background: var(--teal-glow);
+            color: var(--teal-bright);
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .refresh-btn:hover { background: rgba(38,166,154,0.28); }
+
+        /* Summary strip */
+        .cattle-summary-strip {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .strip-stat {
+            flex: 1;
+            min-width: 130px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.85rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .strip-stat .s-label {
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .strip-stat .s-val {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--teal-bright);
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1;
+        }
+
+        .strip-stat .s-sub {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        /* Cattle grid */
+        .cattle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Cattle profile card */
+        .cattle-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: all 0.25s;
+            cursor: pointer;
+        }
+
+        .cattle-card:hover {
+            border-color: var(--border-bright);
+            box-shadow: 0 6px 28px rgba(0,0,0,0.4), 0 0 0 1px var(--teal-glow);
+            transform: translateY(-1px);
+        }
+
+        .cattle-card.identified {
+            border-color: rgba(38,166,154,0.2);
+        }
+
+        .cattle-card.analysing {
+            border-color: rgba(255,167,38,0.15);
+        }
+
+        .cattle-card-header {
+            padding: 1rem 1.2rem 0.75rem;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .cattle-id-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .cattle-id-label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .cattle-id-val {
+            font-size: 1.6rem;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--teal-bright);
+            line-height: 1;
+            letter-spacing: 0.02em;
+        }
+
+        .cattle-id-val.analysing-id {
+            color: var(--amber);
+            font-size: 1.1rem;
+        }
+
+        .cattle-type-badge {
+            font-size: 0.62rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .badge-identified {
+            background: rgba(38,166,154,0.12);
+            color: var(--teal-bright);
+            border: 1px solid var(--border-bright);
+        }
+
+        .badge-analysing {
+            background: rgba(255,167,38,0.1);
+            color: var(--amber);
+            border: 1px solid rgba(255,167,38,0.25);
+        }
+
+        /* Stats row */
+        .cattle-stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cattle-stat {
+            padding: 0.6rem 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .cattle-stat + .cattle-stat {
+            border-left: 1px solid var(--border);
+        }
+
+        .cattle-stat .cs-label {
+            font-size: 0.58rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .cattle-stat .cs-val {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ─── NEW: Behaviour Data Section (sketch-based) ─── */
+        .cattle-header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.35rem;
+        }
+
+        .cattle-obs-count {
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.04em;
+        }
+
+        .cattle-behaviour-data {
+            padding: 0.75rem 1.2rem 0.6rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .cattle-behaviour-heading {
+            font-size: 0.62rem;
+            font-weight: 800;
+            color: var(--teal-bright);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.6rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Individual behavior sub-section */
+        .beh-section {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(38,166,154,0.06);
+        }
+
+        .beh-section:last-child {
+            border-bottom: none;
+        }
+
+        .beh-section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .beh-section-icon {
+            font-size: 0.85rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .beh-section-title {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--text-2);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            flex: 1;
+        }
+
+        .beh-session-count {
+            font-size: 0.56rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+        }
+
+        /* Timeline row: Start → End | Total Duration */
+        .beh-timeline-row {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(0,0,0,0.15);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 0.4rem 0.6rem;
+            margin-left: 0.5rem;
+        }
+
+        .beh-time-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+            flex: 1;
+        }
+
+        .beh-dur-cell {
+            flex: 1.2;
+        }
+
+        .beh-time-label {
+            font-size: 0.5rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .beh-time-val {
+            font-size: 0.67rem;
+            font-weight: 600;
+            color: var(--text-2);
+            font-family: 'JetBrains Mono', monospace;
+            white-space: nowrap;
+        }
+
+        .beh-time-arrow {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 0 0.1rem;
+        }
+
+        .beh-time-sep {
+            font-size: 0.75rem;
+            color: var(--border-bright);
+            padding: 0 0.15rem;
+        }
+
+        /* Color-coded duration values */
+        .beh-dur-val {
+            font-size: 0.72rem;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .lying-dur   { color: #EF9A9A; }
+        .stand-dur   { color: #A5D6A7; }
+        .feeding-dur { color: var(--teal-bright); }
+        .idle-dur    { color: #FFCC80; }
+
+        /* Timestamps section */
+        .cattle-times {
+            padding: 0.6rem 1.2rem 0.85rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .time-item {
+            flex: 1;
+        }
+
+        .time-label {
+            font-size: 0.58rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .time-val {
+            font-size: 0.7rem;
+            color: var(--text-2);
+            font-family: 'JetBrains Mono', monospace;
+            margin-top: 0.15rem;
+            word-break: break-all;
+        }
+
+        /* Card footer */
+        .cattle-card-footer {
+            padding: 0.75rem 1.2rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .cam-chip {
+            font-size: 0.6rem;
+            font-weight: 700;
+            background: rgba(38,166,154,0.08);
+            color: var(--text-muted);
+            padding: 0.2rem 0.5rem;
+            border-radius: 5px;
+            border: 1px solid var(--border);
+            letter-spacing: 0.04em;
+        }
+
+        .view-history-btn {
+            margin-left: auto;
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: var(--teal-glow);
+            color: var(--teal-bright);
+            border: 1px solid var(--border-bright);
+            padding: 0.3rem 0.8rem;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .view-history-btn:hover {
+            background: rgba(38,166,154,0.28);
+        }
+
+        .export-btn {
+            font-size: 0.7rem;
+            font-weight: 700;
+            background: none;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 0.3rem 0.7rem;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .export-btn:hover {
+            border-color: var(--teal);
+            color: var(--teal-bright);
+        }
+
+        /* History drawer modal */
+        .history-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            z-index: 500;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+
+        .history-modal-overlay.open {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        .history-modal {
+            background: var(--bg-2);
+            border: 1px solid var(--border-bright);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 780px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            transform: scale(0.96);
+            transition: transform 0.25s;
+        }
+
+        .history-modal-overlay.open .history-modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .modal-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .modal-title h2 {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .modal-title .modal-id-chip {
+            font-size: 0.75rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--teal-glow);
+            color: var(--teal-bright);
+            border: 1px solid var(--border-bright);
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            transition: color 0.2s, background 0.2s;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+            background: rgba(255,255,255,0.06);
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem 1.5rem;
+        }
+
+        /* History table */
+        .history-table-wrap {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+        }
+
+        .history-table th {
+            padding: 0.65rem 0.85rem;
+            background: rgba(0,0,0,0.3);
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-size: 0.62rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .history-table td {
+            padding: 0.6rem 0.85rem;
+            border-bottom: 1px solid rgba(38,166,154,0.06);
+            color: var(--text-2);
+            font-family: 'JetBrains Mono', monospace;
+            vertical-align: middle;
+        }
+
+        .history-table tr:last-child td { border-bottom: none; }
+        .history-table tr:hover td { background: rgba(38,166,154,0.05); }
+
+        .posture-chip {
+            display: inline-block;
+            padding: 0.18rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.68rem;
+            font-weight: 700;
+        }
+
+        .posture-lying {
+            background: rgba(239,83,80,0.12);
+            color: #EF9A9A;
+            border: 1px solid rgba(239,83,80,0.2);
+        }
+
+        .posture-standing {
+            background: rgba(102,187,106,0.12);
+            color: #A5D6A7;
+            border: 1px solid rgba(102,187,106,0.2);
+        }
+
+        .posture-uncertain {
+            background: rgba(255,167,38,0.1);
+            color: #FFCC80;
+            border: 1px solid rgba(255,167,38,0.2);
+        }
+
+        .feed-chip {
+            display: inline-block;
+            padding: 0.18rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.68rem;
+            font-weight: 700;
+        }
+
+        .feed-feeding {
+            background: rgba(38,166,154,0.12);
+            color: var(--teal-bright);
+            border: 1px solid var(--border-bright);
+        }
+
+        .feed-idle {
+            background: rgba(158,158,158,0.1);
+            color: #B0BEC5;
+            border: 1px solid rgba(158,158,158,0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state .empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .empty-state p {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .empty-state span {
+            font-size: 0.72rem;
+            opacity: 0.6;
+        }
+
+        /* Loading state */
+        .cattle-loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+            gap: 1rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Settings Drawer */
+        .drawer {
+            position: fixed;
+            right: -420px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: var(--bg-2);
+            border-left: 1px solid var(--border);
+            box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+            z-index: 600;
+            transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .drawer.open { right: 0; }
+
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 599;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .drawer-overlay.open { display: block; opacity: 1; }
+
+        .drawer-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .drawer-header h2 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .drawer-body {
+            padding: 1.5rem;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 0.45rem; }
+
+        .form-group label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .form-group input, .form-group select {
+            background: var(--bg-3);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.65rem 0.9rem;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group input::placeholder { color: var(--text-muted); }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--teal);
+        }
+
+        .form-group select option {
+            background: var(--bg-3);
+        }
+
+        .field-hint {
+            font-size: 0.62rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, var(--teal), var(--teal-dim));
+            border: none;
+            color: #fff;
+            padding: 0.85rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: opacity 0.2s, transform 0.1s;
+            box-shadow: 0 4px 16px rgba(38,166,154,0.3);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .save-btn:hover { opacity: 0.9; }
+        .save-btn:active { transform: scale(0.98); }
+
+        .status-msg {
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 0.55rem 0.85rem;
+            border-radius: 7px;
+            display: none;
+        }
+
+        .status-msg.success {
+            display: block;
+            background: rgba(102,187,106,0.1);
+            color: var(--green);
+            border: 1px solid rgba(102,187,106,0.25);
+        }
+
+        .status-msg.error {
+            display: block;
+            background: rgba(239,83,80,0.1);
+            color: var(--red);
+            border: 1px solid rgba(239,83,80,0.25);
+        }
+
+        /* Settings Drawer */
+        .drawer {
+            position: fixed;
+            right: -420px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: var(--bg-2);
+            border-left: 1px solid var(--border);
+            box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+            z-index: 600;
+            transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .drawer.open { right: 0; }
+
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 599;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .drawer-overlay.open { display: block; opacity: 1; }
+
+        .drawer-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .drawer-header h2 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .drawer-body {
+            padding: 1.5rem;
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 0.45rem; }
+
+        .form-group label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .form-group input, .form-group select {
+            background: var(--bg-3);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.65rem 0.9rem;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group input::placeholder { color: var(--text-muted); }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--teal);
+        }
+
+        .form-group select option {
+            background: var(--bg-3);
+        }
+
+        .field-hint {
+            font-size: 0.62rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, var(--teal), var(--teal-dim));
+            border: none;
+            color: #fff;
+            padding: 0.85rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: opacity 0.2s, transform 0.1s;
+            box-shadow: 0 4px 16px rgba(38,166,154,0.3);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .save-btn:hover { opacity: 0.9; }
+        .save-btn:active { transform: scale(0.98); }
+
+        .status-msg {
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 0.55rem 0.85rem;
+            border-radius: 7px;
+            display: none;
+        }
+
+        .status-msg.success {
+            display: block;
+            background: rgba(102,187,106,0.1);
+            color: var(--green);
+            border: 1px solid rgba(102,187,106,0.25);
+        }
+
+        .status-msg.error {
+            display: block;
+            background: rgba(239,83,80,0.1);
+            color: var(--red);
+            border: 1px solid rgba(239,83,80,0.25);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--teal-dim); }
+
+        /* ── ALERT CENTER OVERLAY (Slide-in) ── */
+        .alert-center-overlay {
+            position: fixed;
+            inset: 0;
+            background: #FAF5E9;       /* Light warm cream background */
+            z-index: 1500;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(100%);
+        }
+
+        .alert-center-overlay.open {
+            display: flex;
+            transform: translateX(0);
+        }
+
+        .alert-header {
+            padding: 1.2rem 1.5rem;
+            background: #005c53;       /* Premium native deep teal header */
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 40, 36, 0.15);
+        }
+
+        .alert-back-btn {
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.35rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .alert-back-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .alert-header h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: #ffffff;
+        }
+
+        .alert-body {
+            flex: 1;
+            padding: 1.25rem 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Pill filter group */
+        .alert-filters {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.25rem;
+        }
+
+        .alert-filter-pill {
+            padding: 0.5rem 1.1rem;
+            border-radius: 9999px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid rgba(0, 92, 83, 0.1);
+            background: var(--bg-2);
+            color: var(--text-2);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .alert-filter-pill.active {
+            background: #005c53;
+            color: #ffffff;
+            border-color: #005c53;
+        }
+
+        /* Alert cards */
+        .alert-card {
+            background: #ffffff !important;       /* Pure white card backgrounds */
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+            border: 2px solid #005c53 !important;
+            padding: 1.1rem 1.2rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            transition: transform 0.2s;
+            overflow: hidden;
+            color: #000000 !important;
+        }
+
+        .alert-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+        }
+
+        /* Severity left-borders */
+        .alert-card.severity-high {
+            border-left: 8px solid #DC2626 !important;
+            background: #FEF2F2 !important;
+        }
+
+        .alert-card.severity-warning {
+            border-left: 8px solid #D97706 !important;
+            background: #FFFBEB !important;
+        }
+
+        .alert-card.severity-info {
+            border-left: 8px solid #005c53 !important;
+            background: #F0FDFA !important;
+        }
+
+        .alert-card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert-card-category {
+            font-size: 0.72rem;
+            font-weight: 900 !important;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            color: #000000 !important;
+            border: 1px solid #000000;
+        }
+
+        .severity-high .alert-card-category {
+            background: #FEE2E2 !important;
+            color: #991B1B !important;
+        }
+
+        .severity-warning .alert-card-category {
+            background: #FEF3C7 !important;
+            color: #92400E !important;
+        }
+
+        .severity-info .alert-card-category {
+            background: #CCFBF1 !important;
+            color: #0F766E !important;
+        }
+
+        .alert-card-time {
+            font-size: 0.78rem;
+            font-weight: 800 !important;
+            color: #000000 !important;
+        }
+
+        .alert-card-message {
+            font-size: 0.95rem;
+            font-weight: 900 !important;
+            color: #000000 !important;
+            line-height: 1.45;
+        }
+
+        /* ── MASTER SHEET EDITOR CARD ── */
+        .mastersheet-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .mastersheet-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.6rem;
+        }
+
+        .mastersheet-header h3 {
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: var(--teal);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .mastersheet-desc {
+            font-size: 0.76rem;
+            color: var(--text-2);
+            line-height: 1.4;
+        }
+
+        .mastersheet-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+        }
+
+        .mastersheet-tag-chip {
+            background: var(--teal-glow);
+            color: var(--teal);
+            border: 1px solid var(--border-bright);
+            border-radius: 8px;
+            padding: 0.35rem 0.7rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .mastersheet-tag-delete {
+            background: none;
+            border: none;
+            color: var(--red);
+            font-weight: 800;
+            cursor: pointer;
+            padding: 0.1rem 0.2rem;
+            border-radius: 3px;
+            line-height: 1;
+            font-size: 0.75rem;
+        }
+
+        .mastersheet-tag-delete:hover {
+            background: rgba(211, 47, 47, 0.08);
+        }
+
+        .mastersheet-input-group {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .mastersheet-input-group input {
+            flex: 1;
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.55rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            outline: none;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .mastersheet-input-group input:focus {
+            border-color: var(--teal);
+        }
+
+        .mastersheet-add-btn {
+            background: var(--teal-bright);
+            color: white;
+            border: none;
+            padding: 0.55rem 1.1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mastersheet-add-btn:hover {
+            background: var(--teal-dim);
+        }
+
+        /* ── Adaptive Behavioral Intelligence Engine ── */
+        .cattle-adaptive-health {
+            margin-top: 15px;
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
+        }
+        .adaptive-health-heading {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--teal);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .learning-mode-banner {
+            width: 100%;
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .learning-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .learning-pill {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #f59e0b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .learning-days-label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .learning-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(245, 158, 11, 0.15);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .learning-progress-fill {
+            height: 100%;
+            background: #f59e0b;
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+        .learning-tip {
+            font-size: 0.62rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+            font-style: italic;
+        }
+        
+        .calibration-success-banner {
+            width: 100%;
+            background: rgba(16, 185, 129, 0.06);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .calibration-pill {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #10b981;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .calibration-label {
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .risk-gauge-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 10px;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+        }
+        .risk-gauge-circle {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            position: relative;
+            background: rgba(0, 0, 0, 0.12);
+            transition: all 0.3s ease;
+        }
+        .risk-gauge-val {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            line-height: 1;
+        }
+        .risk-gauge-label {
+            font-size: 0.5rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            margin-top: 1px;
+        }
+        .risk-status-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .risk-status-label {
+            font-size: 0.62rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .deviations-table {
+            width: 100%;
+            font-size: 0.76rem;
+            border-collapse: collapse;
+            margin-top: 8px;
+            margin-bottom: 15px;
+        }
+        .deviations-table th {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            padding: 6px 4px;
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+        }
+        .deviations-table td {
+            padding: 6px 4px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--text-main);
+        }
+        .dev-ok {
+            color: #10b981;
+            font-weight: 700;
+        }
+        .dev-warn {
+            color: #f97316;
+            font-weight: 700;
+        }
+        .dev-critical {
+            color: #ef4444;
+            font-weight: 700;
+            animation: pulse-danger 2s infinite;
+        }
+        
+        @keyframes pulse-danger {
+            0% { opacity: 1; }
+            50% { opacity: 0.65; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="logo">
+        <img src="/static/logo.png" alt="Kisan Pro Logo" style="height: 42px; width: auto; object-fit: contain;">
+        <div class="logo-text">
+            <h1 style="color: #ffffff; font-size: 1.3rem;">Kisan CattleVision</h1>
+        </div>
+    </div>
+    <div class="header-right">
+        <button class="icon-btn" onclick="openAlertCenter()" style="position: relative; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.25); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
+            <span style="font-size: 1.25rem; line-height: 1;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: white; vertical-align: middle;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></span>
+            <span id="alert-badge" style="position: absolute; top: -2px; right: -2px; background: var(--red); color: white; font-size: 0.62rem; font-weight: 800; padding: 0.15rem 0.35rem; border-radius: 9999px; border: 1.5px solid #005c53; display: none;">0</span>
+        </button>
+    </div>
+</header>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+    <button class="tab-btn active" id="tab-live" onclick="switchTab('live')">
+        Live Feed
+    </button>
+    <button class="tab-btn" id="tab-cattle" onclick="switchTab('cattle')">
+        Cattle Records
+        <span class="tab-badge" id="cattle-count-badge">—</span>
+    </button>
+    <button class="tab-btn" id="tab-security" onclick="switchTab('security')">
+        Farm Security & Attendance
+        <span class="tab-badge" id="security-count-badge">0</span>
+    </button>
+</div>
+
+<!-- ── TAB: LIVE FEED ── -->
+<div class="tab-panel active" id="panel-live">
+    <div class="grid-container">
+        {% for cam_id in cameras %}
+        <div class="cam-card">
+            <div class="cam-header">
+                <span class="cam-name">{{ cam_id }} — Live</span>
+                <span class="cam-stats" id="stats-{{ cam_id }}">FPS: — | Res: —</span>
+                <span class="cam-status-badge online" id="badge-{{ cam_id }}">Active AI</span>
+            </div>
+            <div class="video-wrapper" onclick="enterFullscreenStream('{{ cam_id }}')">
+                <div id="loader-{{ cam_id }}" class="loading-overlay">
+                    <div class="spinner"></div>
+                    <span class="loading-txt">Connecting to {{ cam_id.upper() }} stream...</span>
+                </div>
+                <img id="feed-{{ cam_id }}" class="video-feed"
+                     src="/video_feed/{{ cam_id }}"
+                     onload="hideLoader('{{ cam_id }}')"
+                     onerror="showError('{{ cam_id }}')">
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ── TAB: CATTLE RECORDS ── -->
+<div class="tab-panel" id="panel-cattle">
+    <div id="cattle-panel">
+        <!-- Mastersheet Panel -->
+        <div class="mastersheet-card">
+            <div class="mastersheet-header">
+                <h3>Cattle ID Master Sheet</h3>
+                <span class="tab-badge" id="mastersheet-count">0 IDs Registered</span>
+            </div>
+            <p class="mastersheet-desc">
+                Register verified alpha-numeric 4-character ear-tag IDs (format: one uppercase letter followed by three digits, e.g., <strong>A145</strong>). The AI model will cross-verify and auto-correct OCR readings against this sheet to prevent corrupted log entries.
+            </p>
+            <div class="mastersheet-tags" id="mastersheet-tags-container">
+                <!-- Dynamically filled with mastersheet chips -->
+            </div>
+            <div class="mastersheet-input-group">
+                <input type="text" id="mastersheet-new-id" placeholder="Enter alphanumeric ID (e.g. A145)" maxlength="4" style="text-transform: uppercase;">
+                <button class="mastersheet-add-btn" onclick="addMasterSheetId()">+ Register ID</button>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="cattle-toolbar">
+            <div class="search-wrap">
+                <span class="search-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+                <input type="text" id="cattle-search" placeholder="Search by ear tag ID…" oninput="filterCattle()">
+            </div>
+            <button class="refresh-btn" onclick="loadCattleRecords()">Refresh</button>
+        </div>
+
+        <!-- Stats Strip -->
+        <div class="cattle-summary-strip" id="cattle-strip">
+            <div class="strip-stat">
+                <span class="s-label">Total Cattle</span>
+                <span class="s-val" id="strip-total">—</span>
+                <span class="s-sub">tracked entities</span>
+            </div>
+            <div class="strip-stat">
+                <span class="s-label">Identified</span>
+                <span class="s-val" id="strip-identified" style="color:var(--teal-bright)">—</span>
+                <span class="s-sub">confirmed ear tags</span>
+            </div>
+            <div class="strip-stat">
+                <span class="s-label">Total Records</span>
+                <span class="s-val" id="strip-records">—</span>
+                <span class="s-sub">logged observations</span>
+            </div>
+        </div>
+
+        <!-- Loading state -->
+        <div class="cattle-loading" id="cattle-loading">
+            <div class="spinner"></div>
+            Loading cattle records from storage…
+        </div>
+
+        <!-- Cattle Grid -->
+        <div class="cattle-grid" id="cattle-grid"></div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="cattle-empty" style="display:none;">
+            <div class="empty-icon"></div>
+            <p>No cattle records found</p>
+            <span>Records will appear here as cattle are detected and logged by the AI pipeline</span>
+        </div>
+    </div>
+</div>
+
+<!-- ── TAB: FARM SECURITY & VISITOR ATTENDANCE ── -->
+<div class="tab-panel" id="panel-security">
+    <div class="cattle-records-container">
+        <div class="cattle-records-header">
+            <div class="c-title-block">
+                <h1>Farm Security & Worker Attendance</h1>
+                <p>Real-time person reidentification log from local farm camera streams</p>
+            </div>
+            <div class="c-actions">
+                <button class="add-tag-btn" onclick="loadSecurityLogs()">Refresh Logs</button>
+            </div>
+        </div>
+
+        <!-- Security Stats Bar -->
+        <div class="strip-stats-bar" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 20px; width: 100%;">
+            <div class="strip-stat">
+                <span class="s-label">Total Visits</span>
+                <span class="s-val" id="sec-stat-total">0</span>
+                <span class="s-sub">today's check-ins</span>
+            </div>
+            <div class="strip-stat">
+                <span class="s-label">Authorized Workers</span>
+                <span class="s-val" id="sec-stat-workers" style="color: #10b981;">0</span>
+                <span class="s-sub">farm operations team</span>
+            </div>
+            <div class="strip-stat">
+                <span class="s-label">Registered Members</span>
+                <span class="s-val" id="sec-stat-family" style="color: #06b6d4;">0</span>
+                <span class="s-sub">verified access</span>
+            </div>
+            <div class="strip-stat">
+                <span class="s-label" style="color: #ef4444;">Security Alerts</span>
+                <span class="s-val" id="sec-stat-alerts" style="color: #ef4444;">0</span>
+                <span class="s-sub">unauthorized check-ins</span>
+            </div>
+        </div>
+
+        <!-- Registered Members Daily Attendance Board -->
+        <div class="attendance-board-section" style="margin-top: 15px; margin-bottom: 25px; width: 100%;">
+            <div style="border-bottom: 2px solid var(--teal-bright); padding-bottom: 8px; margin-bottom: 15px;">
+                <h2 style="font-size: 1.3rem; color: var(--teal-bright); display: flex; align-items: center; gap: 10px; margin: 0;">
+                    Registered Members Daily Attendance Board
+                </h2>
+                <p style="color: var(--text-muted); font-size: 0.82rem; margin: 4px 0 0 0;">
+                    Digital log of registered members showing check-in/out times and real-time active status for today
+                </p>
+            </div>
+            
+            <div class="history-table-wrap" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 10px; width: 100%;">
+                <table class="history-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <th style="font-size: 0.72rem; letter-spacing: 0.5px; padding: 10px; border-bottom: 2px solid var(--border); text-align: left;">Name</th>
+                            <th style="font-size: 0.72rem; letter-spacing: 0.5px; padding: 10px; border-bottom: 2px solid var(--border); text-align: left;">Role / Access Level</th>
+                            <th style="font-size: 0.72rem; letter-spacing: 0.5px; padding: 10px; border-bottom: 2px solid var(--border); text-align: left;">First Check-In (In-Time)</th>
+                            <th style="font-size: 0.72rem; letter-spacing: 0.5px; padding: 10px; border-bottom: 2px solid var(--border); text-align: left;">Last Seen (Out-Time)</th>
+                            <th style="font-size: 0.72rem; letter-spacing: 0.5px; padding: 10px; border-bottom: 2px solid var(--border); text-align: left;">Current Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendance-board-tbody">
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);">No attendance logged today</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Security Loading State -->
+        <div class="cattle-loading" id="security-loading" style="display:none;">
+            <div class="spinner"></div>
+            Loading security attendance logs from F drive...
+        </div>
+
+        <!-- Attendance Logs Table Container -->
+        <div class="history-table-wrap" style="max-height: 550px; overflow-y: auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 10px; width: 100%;">
+            <table class="history-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="font-size: 0.72rem; letter-spacing: 0.5px; padding: 10px; border-bottom: 2px solid var(--border);">Time & Date</th>
+                        <th style="font-size: 0.72rem; letter-spacing: 0.5px; padding: 10px; border-bottom: 2px solid var(--border);">Person/ID</th>
+                        <th style="font-size: 0.72rem; letter-spacing: 0.5px; padding: 10px; border-bottom: 2px solid var(--border);">Access Level</th>
+                        <th style="font-size: 0.72rem; letter-spacing: 0.5px; padding: 10px; border-bottom: 2px solid var(--border);">Track ID</th>
+                        <th style="font-size: 0.72rem; letter-spacing: 0.5px; padding: 10px; border-bottom: 2px solid var(--border);">Security Status</th>
+                    </tr>
+                </thead>
+                <tbody id="security-log-tbody">
+                    <!-- Loaded dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Captured Unknown Visitors & Intruders Subsection -->
+        <div class="unknown-visitors-section" style="margin-top: 35px; width: 100%;">
+            <div style="border-bottom: 2px solid #ef4444; padding-bottom: 8px; margin-bottom: 20px;">
+                <h2 style="font-size: 1.4rem; color: #ef4444; display: flex; align-items: center; gap: 10px; margin: 0;">
+                    Captured Unknown Visitors & Intruders
+                </h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 4px 0 0 0;">
+                    Real-time snapshot repository of unverified faces detected on the farm boundary
+                </p>
+            </div>
+            
+            <div class="unknown-gallery-grid" id="unknown-gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.5rem; width: 100%; min-height: 100px; margin-bottom: 20px;">
+                <!-- Loaded dynamically from API -->
+                <div class="empty-state" style="grid-column: 1 / -1; padding: 30px; background: var(--bg-card); border: 1px dashed var(--border); border-radius: 12px; text-align: center;">
+                    
+                    <p style="margin-top: 10px; color: var(--text-muted); font-weight: 500;">No unknown visitors detected today</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Empty State -->
+        <div class="empty-state" id="security-empty" style="display:none; padding: 40px 20px;">
+            <div class="empty-icon"></div>
+            <p>No visitor or worker log found</p>
+            <span>Run the local facial reidentification camera script to log access</span>
+        </div>
+    </div>
+</div>
+
+<!-- ── FULLSCREEN STREAM OVERLAY ── -->
+<div id="fullscreen-overlay" class="fullscreen-view" style="display: none;">
+    <div class="fullscreen-header">
+        <div class="fullscreen-logo">
+            <img src="/static/logo.png" alt="Kisan Pro Logo" style="height: 42px; width: auto; object-fit: contain;">
+            <div class="logo-text">
+                <h2>Kisan CattleVision</h2>
+                <span>Live Fullscreen View</span>
+            </div>
+        </div>
+        <button class="fullscreen-back-btn" onclick="exitFullscreenStream()">← Back to Dashboard</button>
+    </div>
+    <div class="fullscreen-body">
+        <div class="fullscreen-feed-wrapper">
+            <div id="fullscreen-loader" class="loading-overlay" style="display: none;">
+                <div class="spinner"></div>
+                <span class="loading-txt">Connecting to stream...</span>
+            </div>
+            <img id="fullscreen-feed-img" class="fullscreen-feed" src="" alt="Camera Feed">
+        </div>
+    </div>
+</div>
+
+<!-- ── HISTORY MODAL ── -->
+<div class="history-modal-overlay" id="history-modal-overlay" onclick="closeHistoryModal(event)">
+    <div class="history-modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <div class="modal-title">
+                <h2>Cattle History</h2>
+                <span class="modal-id-chip" id="modal-cattle-id">—</span>
+            </div>
+            <button class="modal-close" onclick="closeHistoryModal()">✕</button>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div class="cattle-loading"><div class="spinner"></div> Loading history…</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── ALERT CENTER OVERLAY ── -->
+<div id="alert-center-overlay" class="alert-center-overlay">
+    <div class="alert-header">
+        <button class="alert-back-btn" onclick="closeAlertCenter()">←</button>
+        <h2>Alert Center</h2>
+    </div>
+    <div class="alert-body">
+        <div class="alert-filters">
+            <span class="alert-filter-pill active" id="alert-filter-all" onclick="filterAlerts('all')">All Alerts</span>
+            <span class="alert-filter-pill" id="alert-filter-monitoring" onclick="filterAlerts('CATTLE MONITORING')">Cattle Monitoring</span>
+            <span class="alert-filter-pill" id="alert-filter-tracking" onclick="filterAlerts('CATTLE TRACKING')">Cattle Tracking</span>
+        </div>
+        <div id="alert-list-container" style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Dynamically populated with alert cards -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // ── State ──────────────────────────────────────────
+    let cattleData = {};
+    let activeFilter = 'all';
+    let currentHistoryCattleId = null;
+    let alertFilter = 'all';
+    let allAlerts = [];
+
+    // On-load initializations
+    document.addEventListener('DOMContentLoaded', () => {
+        loadMasterSheet();
+        loadAlerts();
+        loadSecurityLogs();
+        setInterval(loadAlerts, 3000);
+        setInterval(loadSecurityLogs, 5000);
+    });
+
+    // ── Relative Time Helper ───────────────────────────
+    function timeAgo(dateString) {
+        try {
+            const now = new Date();
+            const date = new Date(dateString);
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            
+            if (diffMins < 1) return 'Just Now';
+            if (diffMins < 60) return `${diffMins} Minute${diffMins > 1 ? 's' : ''} Ago`;
+            
+            const diffHrs = Math.floor(diffMins / 60);
+            if (diffHrs < 24) return `${diffHrs} Hour${diffHrs > 1 ? 's' : ''} Ago`;
+            
+            const diffDays = Math.floor(diffHrs / 24);
+            return `${diffDays} Day${diffDays > 1 ? 's' : ''} Ago`;
+        } catch(e) {
+            return 'Recently';
+        }
+    }
+
+    // ── Mastersheet Functions ─────────────────────────
+    async function loadMasterSheet() {
+        try {
+            const res = await fetch('/api/master_sheet');
+            const data = await res.json();
+            if (data.status === 'success') {
+                renderMasterSheet(data.ids || []);
+            }
+        } catch(e) {
+            console.error('Error loading master sheet:', e);
+        }
+    }
+
+    function renderMasterSheet(ids) {
+        const container = document.getElementById('mastersheet-tags-container');
+        const countBadge = document.getElementById('mastersheet-count');
+        
+        container.innerHTML = '';
+        countBadge.textContent = `${ids.length} ID${ids.length !== 1 ? 's' : ''} Registered`;
+        
+        if (ids.length === 0) {
+            container.innerHTML = '<span style="font-size:0.72rem;color:var(--text-muted);font-style:italic;padding:0.4rem 0;">No cattle IDs registered yet. Please add some below.</span>';
+            return;
+        }
+        
+        ids.forEach(id => {
+            const chip = document.createElement('span');
+            chip.className = 'mastersheet-tag-chip';
+            chip.innerHTML = `
+                ${escapeHtml(id)}
+                <button class="mastersheet-tag-delete" onclick="deleteMasterSheetId('${escapeHtml(id)}')">✕</button>
+            `;
+            container.appendChild(chip);
+        });
+    }
+
+    async function addMasterSheetId() {
+        const input = document.getElementById('mastersheet-new-id');
+        const rawVal = (input.value || '').toUpperCase().trim();
+        
+        const pattern = /^[A-Z0-9]{4}$/;
+        if (!pattern.test(rawVal)) {
+            alert('Invalid ID format! Please enter exactly 4 alpha-numeric characters (e.g. A145).');
+            return;
+        }
+        
+        try {
+            const curRes = await fetch('/api/master_sheet');
+            const curData = await curRes.json();
+            let currentIds = curData.ids || [];
+            
+            if (currentIds.includes(rawVal)) {
+                alert('This ID is already registered!');
+                return;
+            }
+            
+            currentIds.push(rawVal);
+            
+            const saveRes = await fetch('/api/master_sheet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: currentIds })
+            });
+            const saveData = await saveRes.json();
+            if (saveData.status === 'success') {
+                input.value = '';
+                loadMasterSheet();
+                loadCattleRecords();
+            } else {
+                alert('Failed to register ID: ' + saveData.message);
+            }
+        } catch(e) {
+            alert('Error registering ID: ' + e);
+        }
+    }
+
+    async function deleteMasterSheetId(id) {
+        if (!confirm(`Are you sure you want to remove Cattle ID ${id} from the master list?`)) return;
+        
+        try {
+            const curRes = await fetch('/api/master_sheet');
+            const curData = await curRes.json();
+            let currentIds = curData.ids || [];
+            
+            currentIds = currentIds.filter(x => x !== id);
+            
+            const saveRes = await fetch('/api/master_sheet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: currentIds })
+            });
+            const saveData = await saveRes.json();
+            if (saveData.status === 'success') {
+                loadMasterSheet();
+                loadCattleRecords();
+            } else {
+                alert('Failed to delete ID: ' + saveData.message);
+            }
+        } catch(e) {
+            alert('Error deleting ID: ' + e);
+        }
+    }
+
+    // ── Alert Center Functions ─────────────────────────
+    function openAlertCenter() {
+        const overlay = document.getElementById('alert-center-overlay');
+        overlay.style.display = 'flex';
+        overlay.offsetHeight; // force reflow
+        overlay.classList.add('open');
+        loadAlerts();
+    }
+
+    function closeAlertCenter() {
+        const overlay = document.getElementById('alert-center-overlay');
+        overlay.classList.remove('open');
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 350);
+    }
+
+    async function loadAlerts() {
+        try {
+            const res = await fetch('/api/alerts');
+            allAlerts = await res.json();
+            renderAlertsList();
+            updateAlertBadge();
+        } catch(e) {
+            console.error('Error loading alerts:', e);
+        }
+    }
+
+    function filterAlerts(category) {
+        alertFilter = category;
+        document.querySelectorAll('.alert-filter-pill').forEach(pill => {
+            pill.classList.remove('active');
+        });
+        if (category === 'all') {
+            document.getElementById('alert-filter-all').classList.add('active');
+        } else if (category === 'CATTLE MONITORING') {
+            document.getElementById('alert-filter-monitoring').classList.add('active');
+        } else if (category === 'CATTLE TRACKING') {
+            document.getElementById('alert-filter-tracking').classList.add('active');
+        }
+        renderAlertsList();
+    }
+
+    function renderAlertsList() {
+        const container = document.getElementById('alert-list-container');
+        container.innerHTML = '';
+        
+        let filtered = allAlerts;
+        if (alertFilter !== 'all') {
+            filtered = allAlerts.filter(a => (a.category || '').toUpperCase() === alertFilter.toUpperCase());
+        }
+        
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon"></div>
+                    <p>No alerts in this category</p>
+                    <span>All clear! System running under normal parameters</span>
+                </div>
+            `;
+            return;
+        }
+        
+        filtered.forEach(a => {
+            container.appendChild(buildAlertCard(a));
+        });
+    }
+
+    function buildAlertCard(a) {
+        const timeStr = timeAgo(a.timestamp);
+        const div = document.createElement('div');
+        div.className = `alert-card severity-${a.severity || 'warning'}`;
+        
+        const photoSrc = a.photo_url || a.image || a.image_url;
+        let photoHtml = '';
+        if (photoSrc) {
+            photoHtml = `
+                <div style="margin-top: 10px; border-radius: 8px; overflow: hidden; width: 140px; height: 140px; background: #000; border: 1px solid rgba(239, 68, 68, 0.4);">
+                    <img src="${photoSrc}" style="width: 100%; height: 100%; object-fit: cover;" alt="Unknown Person Photo" />
+                </div>
+            `;
+        }
+
+        let metaDetailsHtml = '';
+        const unkId = a.unknown_person_id || a.person_id || a.track_id;
+        const unkPhone = a.phone;
+        if (unkId || unkPhone) {
+            metaDetailsHtml = `
+                <div style="margin-top: 6px; display: flex; gap: 12px; font-size: 0.82rem; font-weight: 700; color: #ef4444; font-family: 'JetBrains Mono', monospace;">
+                    ${unkId ? `<span>Person ID: ${escapeHtml(unkId)}</span>` : ''}
+                    ${unkPhone ? `<span>Phone: ${escapeHtml(unkPhone)}</span>` : ''}
+                </div>
+            `;
+        }
+        
+        div.innerHTML = `
+            <div class="alert-card-meta">
+                <span class="alert-card-category">${escapeHtml(a.category || 'CATTLE MONITORING')}</span>
+                <span class="alert-card-time">${timeStr}</span>
+            </div>
+            <div class="alert-card-message">${escapeHtml(a.message || '')}</div>
+            ${metaDetailsHtml}
+            ${photoHtml}
+        `;
+        return div;
+    }
+
+    function updateAlertBadge() {
+        const badge = document.getElementById('alert-badge');
+        const count = allAlerts.length;
+        if (count > 0) {
+            badge.textContent = count;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+
+
+
+    // ── Tab Switching ──────────────────────────────────
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('tab-' + tab).classList.add('active');
+        document.getElementById('panel-' + tab).classList.add('active');
+
+        if (tab === 'cattle') {
+            loadCattleRecords();
+        } else if (tab === 'security') {
+            loadSecurityLogs();
+        }
+    }
+
+    // ── Farm Security & Attendance Logs ─────────────────
+    async function loadSecurityLogs() {
+        const loading = document.getElementById('security-loading');
+        const empty = document.getElementById('security-empty');
+        const tbody = document.getElementById('security-log-tbody');
+        
+        try {
+            const res = await fetch('/api/security/logs');
+            const data = await res.json();
+            
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '';
+                empty.style.display = 'block';
+                document.getElementById('sec-stat-total').textContent = '0';
+                document.getElementById('sec-stat-workers').textContent = '0';
+                document.getElementById('sec-stat-family').textContent = '0';
+                document.getElementById('sec-stat-alerts').textContent = '0';
+                document.getElementById('security-count-badge').textContent = '0';
+                
+                // Clear attendance board
+                const attBody = document.getElementById('attendance-board-tbody');
+                if (attBody) {
+                    attBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);">No attendance logged today</td></tr>';
+                }
+                return;
+            }
+            
+            empty.style.display = 'none';
+            tbody.innerHTML = '';
+            
+            let uniqueWorkers = new Set();
+            let uniqueFamily = new Set();
+            let alertsCount = 0;
+            let totalCount = data.length;
+            
+            data.forEach(log => {
+                const name = log.name;
+                const date = log.date;
+                const time = log.time;
+                const type = log.type;
+                const trackId = log.track_id;
+                
+                let accessLabel = '';
+                let accessClass = '';
+                let statusLabel = '';
+                let statusClass = '';
+                
+                const nameLower = name.toLowerCase();
+                
+                if (nameLower.startsWith('unknown')) {
+                    accessLabel = 'UNAUTHORIZED ACCESS ALERT';
+                    accessClass = 'dev-critical';
+                    statusLabel = 'SECURITY ALERT';
+                    statusClass = 'posture-chip posture-lying';
+                    alertsCount++;
+                } else if (nameLower === 'geetha' || nameLower === 'family') {
+                    accessLabel = 'Registered Member';
+                    accessClass = 'dev-ok';
+                    statusLabel = 'REGISTERED ACCESS';
+                    statusClass = 'posture-chip posture-standing';
+                    uniqueFamily.add(nameLower);
+                } else {
+                    accessLabel = 'Authorized Farm Worker';
+                    accessClass = 'dev-ok';
+                    statusLabel = 'AUTHORIZED';
+                    statusClass = 'posture-chip posture-standing';
+                    if (nameLower !== 'person' && nameLower !== 'analyzing' && nameLower.trim() !== '') {
+                        uniqueWorkers.add(nameLower);
+                    }
+                }
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 600; color: var(--text-main); font-family: 'JetBrains Mono', monospace; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        ${time} <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 500;">(${date})</span>
+                    </td>
+                    <td style="font-weight: 800; color: var(--teal-bright); text-transform: uppercase; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        ${name}
+                    </td>
+                    <td class="${accessClass}" style="font-weight: 700; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        ${accessLabel}
+                    </td>
+                    <td style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-muted); padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        ID:${trackId}
+                    </td>
+                    <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                        <span class="${statusClass}" style="font-size: 0.7rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            ${statusLabel}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            document.getElementById('sec-stat-total').textContent = totalCount;
+            document.getElementById('sec-stat-workers').textContent = uniqueWorkers.size;
+            document.getElementById('sec-stat-family').textContent = uniqueFamily.size;
+            document.getElementById('sec-stat-alerts').textContent = alertsCount;
+            
+            const countBadge = document.getElementById('security-count-badge');
+            if (alertsCount > 0) {
+                countBadge.textContent = alertsCount;
+                countBadge.style.background = 'var(--red)';
+                countBadge.style.color = 'white';
+                countBadge.style.display = 'inline-block';
+            } else {
+                countBadge.textContent = totalCount;
+                countBadge.style.background = 'var(--teal-dim)';
+                countBadge.style.color = 'var(--text-main)';
+                countBadge.style.display = 'inline-block';
+            }
+
+            // Fetch and render Daily Attendance Board
+            try {
+                const attRes = await fetch('/api/security/attendance');
+                const attData = await attRes.json();
+                const attBody = document.getElementById('attendance-board-tbody');
+                
+                if (attBody) {
+                    if (!attData || attData.length === 0) {
+                        attBody.innerHTML = `
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);">
+                                    No attendance logged today
+                                </td>
+                            </tr>
+                        `;
+                    } else {
+                        attBody.innerHTML = '';
+                        attData.forEach(p => {
+                            const tr = document.createElement('tr');
+                            const statusClass = p.status === 'Active' ? 'posture-chip posture-standing' : 'posture-chip posture-lying';
+                            const statusDot = p.status === 'Active' ? 'ACTIVE' : 'AWAY';
+                            const nameColor = p.role === 'Registered Member' ? 'var(--teal-bright)' : '#10b981';
+                            
+                            tr.innerHTML = `
+                                <td style="font-weight: 800; color: ${nameColor}; text-transform: uppercase; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                    ${p.name}
+                                </td>
+                                <td style="font-weight: 700; color: var(--text-main); padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                    ${p.role}
+                                </td>
+                                <td style="font-family: 'JetBrains Mono', monospace; color: var(--text-muted); padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                    ${p.in_time}
+                                </td>
+                                <td style="font-family: 'JetBrains Mono', monospace; color: var(--text-muted); padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                    ${p.out_time}
+                                </td>
+                                <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                    <span class="${statusClass}" style="font-size: 0.7rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; letter-spacing: 0.5px;">
+                                        ${statusDot}
+                                    </span>
+                                </td>
+                            `;
+                            attBody.appendChild(tr);
+                        });
+                    }
+                }
+            } catch (attErr) {
+                console.error("Failed to load attendance board:", attErr);
+            }
+
+            // Load Captured Unknown Visitors gallery dynamically
+            try {
+                const unkRes = await fetch('/api/security/unknown');
+                const unkData = await unkRes.json();
+                const unkGrid = document.getElementById('unknown-gallery-grid');
+                
+                if (!unkData || unkData.length === 0) {
+                    unkGrid.innerHTML = `
+                        <div class="empty-state" style="grid-column: 1 / -1; padding: 30px; background: var(--bg-card); border: 1px dashed var(--border); border-radius: 12px; text-align: center; width: 100%;">
+                            
+                            <p style="margin-top: 10px; color: var(--text-muted); font-weight: 500;">No unknown visitors detected today</p>
+                        </div>
+                    `;
+                } else {
+                    unkGrid.innerHTML = '';
+                    unkData.forEach(v => {
+                        const card = document.createElement('div');
+                        card.style.background = 'var(--bg-card)';
+                        card.style.border = '1px solid rgba(239, 68, 68, 0.2)';
+                        card.style.borderRadius = '12px';
+                        card.style.overflow = 'hidden';
+                        card.style.transition = 'all 0.3s ease';
+                        card.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1)';
+                        card.className = 'unknown-card';
+                        
+                        // Add interactive CSS hover effect dynamically
+                        card.onmouseover = () => {
+                            card.style.transform = 'translateY(-5px)';
+                            card.style.borderColor = '#ef4444';
+                            card.style.boxShadow = '0 10px 15px -3px rgba(239,68,68,0.2)';
+                        };
+                        card.onmouseout = () => {
+                            card.style.transform = 'none';
+                            card.style.borderColor = 'rgba(239, 68, 68, 0.2)';
+                            card.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1)';
+                        };
+                        
+                        card.innerHTML = `
+                            <div style="position: relative; padding-top: 100%; width: 100%; overflow: hidden; background: #000;">
+                                <img src="${v.photo_url}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" alt="Captured Intruder" />
+                                <span style="position: absolute; bottom: 8px; right: 8px; background: #ef4444; color: white; font-weight: 800; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.5px;">INTRUDER</span>
+                            </div>
+                            <div style="padding: 12px; display: flex; flex-direction: column; gap: 4px;">
+                                <span style="font-weight: 800; color: #ef4444; font-size: 0.95rem; text-transform: uppercase;">Unknown ${v.track_id}</span>
+                                <div style="display: flex; flex-direction: column; gap: 2px; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text-muted);">
+                                    <span>${v.date}</span>
+                                    <span>${v.time}</span>
+                                </div>
+                            </div>
+                        `;
+                        unkGrid.appendChild(card);
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to load unknown visitors:", err);
+            }
+            
+        } catch(e) {
+            console.error('Error fetching security logs:', e);
+        }
+    }
+
+    // ── Live Feed ──────────────────────────────────────
+    function hideLoader(camId) {
+        const loader = document.getElementById('loader-' + camId);
+        if (loader) loader.style.display = 'none';
+        const badge = document.getElementById('badge-' + camId);
+        if (badge) { badge.className = 'cam-status-badge online'; badge.innerText = 'ONLINE'; }
+    }
+
+    function showError(camId) {
+        const loader = document.getElementById('loader-' + camId);
+        if (loader) {
+            loader.style.display = 'flex';
+            loader.style.background = '#FEF2F2';
+            loader.innerHTML = `
+                <div style="background: #FFFFFF; border: 3px solid #DC2626; padding: 16px 22px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.4); text-align: center; max-width: 90%;">
+                    <div style="color: #DC2626; font-size: 1.15rem; font-weight: 900; letter-spacing: 0.04em; margin-bottom: 6px; text-transform: uppercase;">
+                        ⚠️ STREAM DISCONNECTED
+                    </div>
+                    <div style="color: #000000 !important; font-size: 0.95rem; font-weight: 900; line-height: 1.4;">
+                        CAMERA STREAM IS NOT WORKING — NOT GETTING STREAM
+                    </div>
+                </div>
+            `;
+        }
+        const badge = document.getElementById('badge-' + camId);
+        if (badge) { 
+            badge.className = 'cam-status-badge offline'; 
+            badge.innerText = 'OFFLINE'; 
+            badge.style.color = '#000000';
+            badge.style.fontWeight = '900';
+            badge.style.background = '#EF4444';
+        }
+    }
+
+    async function refreshStats() {
+        try {
+            const res = await fetch('/api/status');
+            const data = await res.json();
+            for (const camId in data) {
+                const el = document.getElementById('stats-' + camId);
+                if (el) {
+                    const fps = data[camId].fps || '--';
+                    const resVal = data[camId].resolution || '--';
+                    el.textContent = `FPS: ${fps} | Res: ${resVal}`;
+                }
+                // Auto-dismiss stuck MJPEG loading overlay when camera is online
+                if (data[camId] && data[camId].online) {
+                    hideLoader(camId);
+                }
+            }
+        } catch(e) {}
+    }
+
+    refreshStats();
+    setInterval(refreshStats, 5000);
+
+
+
+    // Auto-reconnect
+    setInterval(() => {
+        const camIds = [{% for cam_id in cameras %}'{{ cam_id }}',{% endfor %}];
+        camIds.forEach(camId => {
+            const img = document.getElementById('feed-' + camId);
+            const loader = document.getElementById('loader-' + camId);
+            if (loader && loader.style.display !== 'none' && img) {
+                img.src = '/video_feed/' + camId + '?t=' + Date.now();
+            }
+        });
+    }, 8000);
+
+    // ── Cattle Records ─────────────────────────────────
+    async function loadCattleRecords() {
+        document.getElementById('cattle-loading').style.display = 'flex';
+        document.getElementById('cattle-grid').innerHTML = '';
+        document.getElementById('cattle-empty').style.display = 'none';
+
+        try {
+            const res = await fetch('/api/cattle/summary');
+            cattleData = await res.json();
+            renderCattleGrid();
+        } catch(e) {
+            document.getElementById('cattle-loading').style.display = 'none';
+            document.getElementById('cattle-empty').style.display = 'block';
+        }
+    }
+
+    function filterCattle() {
+        renderCattleGrid();
+    }
+
+    function renderCattleGrid() {
+        const searchVal = (document.getElementById('cattle-search').value || '').toLowerCase().trim();
+        const grid = document.getElementById('cattle-grid');
+        grid.innerHTML = '';
+        document.getElementById('cattle-loading').style.display = 'none';
+
+        // ONLY select identified cattle profiles which are combinations of alphanumeric characters
+        const confirmedEntries = Object.values(cattleData).filter(c => {
+            if (!c.is_identified) return false;
+            const id = String(c.cattle_id).trim().toUpperCase();
+            return /^[A-Z][0-9]{3}$/.test(id);
+        });
+        let filtered = confirmedEntries;
+
+        // Apply search
+        if (searchVal) {
+            filtered = filtered.filter(c => c.cattle_id.toLowerCase().includes(searchVal));
+        }
+
+        // Update strip stats
+        const totalRecords = confirmedEntries.reduce((s, c) => s + (c.total_records || 0), 0);
+        document.getElementById('strip-identified').textContent = confirmedEntries.length;
+        document.getElementById('strip-records').textContent = totalRecords;
+        document.getElementById('cattle-count-badge').textContent = confirmedEntries.length || '0';
+
+        if (filtered.length === 0) {
+            document.getElementById('cattle-empty').style.display = 'block';
+            return;
+        }
+
+        document.getElementById('cattle-empty').style.display = 'none';
+
+        // Sort by last_seen desc
+        filtered.sort((a, b) => {
+            return (b.last_seen || '').localeCompare(a.last_seen || '');
+        });
+
+        filtered.forEach(c => {
+            grid.appendChild(buildCattleCard(c));
+        });
+    }
+
+    function buildCattleCard(c) {
+        const isId = c.is_identified;
+        const totalRecords = c.total_records || 0;
+        const beh = c.behavior_sessions || {};
+
+        // Helper: format seconds as HH:MM:SS
+        function fmtDur(sec) {
+            sec = Math.round(sec || 0);
+            const h = Math.floor(sec / 3600);
+            const m = Math.floor((sec % 3600) / 60);
+            const s = sec % 60;
+            return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        }
+
+        // Helper: extract time-only from datetime string (e.g. "26-05-2026 01:03:18 PM" → "01:03:18 PM")
+        function timePart(ts) {
+            if (!ts) return '—';
+            const parts = ts.trim().split(' ');
+            if (parts.length >= 2) return parts.slice(1).join(' ');
+            return ts;
+        }
+
+        const lyingDur   = (beh.Lying   || {}).total_duration_sec || 0;
+        const standDur   = (beh.Standing || {}).total_duration_sec || 0;
+        const feedDur    = (beh.Feeding  || {}).total_duration_sec || 0;
+        const idleDur    = (beh.Idle     || {}).total_duration_sec || 0;
+
+        const totalDur = lyingDur + standDur + feedDur + idleDur;
+        let lyingPct = 0, standPct = 0, feedPct = 0, idlePct = 0;
+        if (totalDur > 0) {
+            lyingPct = (lyingDur / totalDur) * 100;
+            standPct = (standDur / totalDur) * 100;
+            feedPct = (feedDur / totalDur) * 100;
+            idlePct = (idleDur / totalDur) * 100;
+        }
+
+        const cameras = (c.cameras_seen || []).filter(Boolean);
+        const camChips = cameras.map(cam => `<span class="cam-chip">${cam.toUpperCase()}</span>`).join('');
+
+        const div = document.createElement('div');
+        div.className = `cattle-card ${isId ? 'identified' : 'analysing'}`;
+        div.innerHTML = `
+            <!-- HEADER: EAR TAG ID -->
+            <div class="cattle-card-header">
+                <div class="cattle-id-block">
+                    <span class="cattle-id-label">${isId ? 'Ear Tag ID' : 'Temp ID'}</span>
+                    <span class="cattle-id-val ${isId ? '' : 'analysing-id'}">${escapeHtml(c.cattle_id)}</span>
+                </div>
+                <div class="cattle-header-right">
+                    <span class="cattle-type-badge ${isId ? 'badge-identified' : 'badge-analysing'}">
+                        ${isId ? 'Identified' : 'Analysing'}
+                    </span>
+                    <span class="cattle-obs-count">${totalRecords} obs</span>
+                </div>
+            </div>
+
+            <!-- CATTLE BEHAVIOUR DATA SECTION -->
+            <div class="cattle-behaviour-data">
+                <div class="cattle-behaviour-heading">Behavior Distribution</div>
+                
+                <div class="behaviour-graph-bar">
+                    <div class="bar-segment lying" style="width: ${lyingPct}%; background: #EF9A9A;" title="Lying: ${lyingPct.toFixed(1)}% (${fmtDur(lyingDur)})"></div>
+                    <div class="bar-segment standing" style="width: ${standPct}%; background: #A5D6A7;" title="Standing: ${standPct.toFixed(1)}% (${fmtDur(standDur)})"></div>
+                    <div class="bar-segment feeding" style="width: ${feedPct}%; background: var(--teal-bright);" title="Feeding: ${feedPct.toFixed(1)}% (${fmtDur(feedDur)})"></div>
+                    <div class="bar-segment idle" style="width: ${idlePct}%; background: #FFCC80;" title="Idle: ${idlePct.toFixed(1)}% (${fmtDur(idleDur)})"></div>
+                </div>
+
+                <div class="bar-legend">
+                    <div class="legend-item" title="Total Lying Time: ${fmtDur(lyingDur)}">
+                        <span class="legend-color lying"></span>
+                        <span>Lying: ${lyingPct.toFixed(0)}%</span>
+                    </div>
+                    <div class="legend-item" title="Total Standing Time: ${fmtDur(standDur)}">
+                        <span class="legend-color standing"></span>
+                        <span>Standing: ${standPct.toFixed(0)}%</span>
+                    </div>
+                    <div class="legend-item" title="Total Feeding Time: ${fmtDur(feedDur)}">
+                        <span class="legend-color feeding"></span>
+                        <span>Feeding: ${feedPct.toFixed(0)}%</span>
+                    </div>
+                    <div class="legend-item" title="Total Idle Time: ${fmtDur(idleDur)}">
+                        <span class="legend-color idle"></span>
+                        <span>Idle: ${idlePct.toFixed(0)}%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADAPTIVE BEHAVIORAL INTELLIGENCE ENGINE -->
+            <div class="cattle-adaptive-health">
+                <div class="adaptive-health-heading">Adaptive Behavioral Intelligence</div>
+                
+                ${c.learning_mode ? `
+                <div class="learning-mode-banner">
+                    <div class="learning-header">
+                        <span class="learning-pill">Learning Mode</span>
+                        <span class="learning-days-label">${c.days_learned}/21 Days calibration</span>
+                    </div>
+                    <div class="learning-progress-bar">
+                        <div class="learning-progress-fill" style="width: ${Math.min(100, (c.days_learned / 21) * 100)}%;"></div>
+                    </div>
+                    <div class="learning-tip">Gathering baseline behavioral footprint to personalize health thresholds...</div>
+                </div>
+                ` : `
+                <div class="calibration-success-banner">
+                    <span class="calibration-pill">Calibrated</span>
+                    <span class="calibration-label">Personalized Profile Active</span>
+                </div>
+                `}
+
+                <div class="risk-gauge-wrapper">
+                    <div class="risk-gauge-circle" style="border: 4px solid ${
+                        c.risk_score <= 20 ? '#10b981' :
+                        c.risk_score <= 40 ? '#06b6d4' :
+                        c.risk_score <= 60 ? '#f59e0b' :
+                        c.risk_score <= 80 ? '#f97316' : '#ef4444'
+                    }; box-shadow: 0 0 10px ${
+                        c.risk_score <= 20 ? 'rgba(16, 185, 129, 0.2)' :
+                        c.risk_score <= 40 ? 'rgba(6, 182, 212, 0.2)' :
+                        c.risk_score <= 60 ? 'rgba(245, 158, 11, 0.2)' :
+                        c.risk_score <= 80 ? 'rgba(249, 115, 22, 0.2)' : 'rgba(239, 68, 68, 0.2)'
+                    };">
+                        <span class="risk-gauge-val">${c.risk_score}</span>
+                        <span class="risk-gauge-label">RISK</span>
+                    </div>
+                    <div class="risk-status-info">
+                        <div class="risk-status-label">Health Status</div>
+                        <div class="risk-status-val" style="color: ${
+                            c.risk_score <= 20 ? '#10b981' :
+                            c.risk_score <= 40 ? '#06b6d4' :
+                            c.risk_score <= 60 ? '#f59e0b' :
+                            c.risk_score <= 80 ? '#f97316' : '#ef4444'
+                        }; font-weight: 800; font-size: 1.1em; letter-spacing: 0.5px;">
+                            ${escapeHtml(c.health_status || 'Healthy')}
+                        </div>
+                    </div>
+                </div>
+
+                <table class="deviations-table">
+                    <thead>
+                        <tr>
+                            <th>Behavior</th>
+                            <th>Baseline</th>
+                            <th>Current</th>
+                            <th>Deviation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Feeding</td>
+                            <td>${(c.baseline?.feeding_avg ?? 0).toFixed(1)}h</td>
+                            <td>${(c.current_daily?.feeding ?? 0).toFixed(1)}h</td>
+                            <td class="${(c.deviations?.feeding_drop ?? 0) > 0 ? ((c.deviations?.feeding_drop ?? 0) >= 40 ? 'dev-critical' : 'dev-warn') : 'dev-ok'}">
+                                ${(c.deviations?.feeding_drop ?? 0) > 0 ? `-${(c.deviations.feeding_drop).toFixed(0)}%` : '0%'}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Lying</td>
+                            <td>${(c.baseline?.lying_avg ?? 0).toFixed(1)}h</td>
+                            <td>${(c.current_daily?.lying ?? 0).toFixed(1)}h</td>
+                            <td class="${(c.deviations?.lying_increase ?? 0) > 0 ? ((c.deviations?.lying_increase ?? 0) >= 50 ? 'dev-critical' : 'dev-warn') : 'dev-ok'}">
+                                ${(c.deviations?.lying_increase ?? 0) > 0 ? `+${(c.deviations.lying_increase).toFixed(0)}%` : '0%'}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Standing</td>
+                            <td>${(c.baseline?.standing_avg ?? 0).toFixed(1)}h</td>
+                            <td>${(c.current_daily?.standing ?? 0).toFixed(1)}h</td>
+                            <td class="${(c.deviations?.standing_increase ?? 0) > 0 ? ((c.deviations?.standing_increase ?? 0) >= 50 ? 'dev-critical' : 'dev-warn') : 'dev-ok'}">
+                                ${(c.deviations?.standing_increase ?? 0) > 0 ? `+${(c.deviations.standing_increase).toFixed(0)}%` : '0%'}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Idle</td>
+                            <td>${(c.baseline?.idle_avg ?? 0).toFixed(1)}h</td>
+                            <td>${(c.current_daily?.idle ?? 0).toFixed(1)}h</td>
+                            <td class="${(c.deviations?.idle_increase ?? 0) > 0 ? ((c.deviations?.idle_increase ?? 0) >= 50 ? 'dev-critical' : 'dev-warn') : 'dev-ok'}">
+                                ${(c.deviations?.idle_increase ?? 0) > 0 ? `+${(c.deviations.idle_increase).toFixed(0)}%` : '0%'}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- TIMESTAMPS -->
+            <div class="cattle-times">
+                <div class="time-item">
+                    <div class="time-label">First Seen</div>
+                    <div class="time-val">${c.first_seen || '—'}</div>
+                </div>
+                <div class="time-item">
+                    <div class="time-label">Last Seen</div>
+                    <div class="time-val">${c.last_seen || '—'}</div>
+                </div>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="cattle-card-footer">
+                ${camChips || '<span class="cam-chip">CAM1</span>'}
+                <button class="export-btn" onclick="exportCattle('${escapeHtml(c.cattle_id)}', event)">CSV</button>
+                <button class="view-history-btn" onclick="openHistoryModal('${escapeHtml(c.cattle_id)}', event)">View History →</button>
+            </div>
+        `;
+        return div;
+    }
+
+
+    function escapeHtml(str) {
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    // ── History Modal ──────────────────────────────────
+    // ── Fullscreen Stream ──────────────────────────────
+    let activeFullscreenCamId = null;
+
+    function enterFullscreenStream(camId) {
+        activeFullscreenCamId = camId;
+        const overlay = document.getElementById('fullscreen-overlay');
+        const feedImg = document.getElementById('fullscreen-feed-img');
+        const loader = document.getElementById('fullscreen-loader');
+        
+        loader.style.display = 'flex';
+        feedImg.src = '/video_feed/' + camId + '?t=' + Date.now();
+        overlay.style.display = 'flex';
+
+        feedImg.onload = () => {
+            loader.style.display = 'none';
+        };
+        feedImg.onerror = () => {
+            loader.style.display = 'flex';
+            loader.innerHTML = `<div style="color:var(--red);font-size:1rem;font-weight:700;text-align:center;">STREAM DISCONNECTED</div>`;
+        };
+    }
+
+    function exitFullscreenStream() {
+        const overlay = document.getElementById('fullscreen-overlay');
+        const feedImg = document.getElementById('fullscreen-feed-img');
+        overlay.style.display = 'none';
+        feedImg.src = '';
+        activeFullscreenCamId = null;
+    }
+
+    // ── History Modal ──────────────────────────────────
+    let historyChartInstance = null;
+
+    async function openHistoryModal(cattleId, event) {
+        if (event) event.stopPropagation();
+        currentHistoryCattleId = cattleId;
+
+        const overlay = document.getElementById('history-modal-overlay');
+        document.getElementById('modal-cattle-id').textContent = cattleId;
+        document.getElementById('modal-body').innerHTML = '<div class="cattle-loading"><div class="spinner"></div> Loading history…</div>';
+
+        overlay.style.display = 'flex';
+        setTimeout(() => overlay.classList.add('open'), 10);
+
+        try {
+            const res = await fetch(`/api/cattle/${encodeURIComponent(cattleId)}`);
+            const history = await res.json();
+            renderHistoryTable(history);
+        } catch(e) {
+            document.getElementById('modal-body').innerHTML = '<div class="empty-state"><p>Failed to load history</p></div>';
+        }
+    }
+
+    function renderHistoryTable(history) {
+        const body = document.getElementById('modal-body');
+        if (!history || history.length === 0) {
+            body.innerHTML = '<div class="empty-state"><p>No history records found</p><span>Records appear once the AI pipeline logs observations</span></div>';
+            return;
+        }
+
+        let lyingSec = 0, standingSec = 0, feedingSec = 0, idleSec = 0;
+        history.forEach(h => {
+            const dur = h.duration || 60;
+            if (h.posture === 'Lying') lyingSec += dur;
+            else if (h.posture === 'Standing') standingSec += dur;
+
+            if (h.feeding === 'Feeding_Behaviour') feedingSec += dur;
+            else if (h.feeding === 'Idle_Behaviour') idleSec += dur;
+        });
+
+        const postureChip = (p) => {
+            if (p === 'Lying') return `<span class="posture-chip posture-lying">Lying</span>`;
+            if (p === 'Standing') return `<span class="posture-chip posture-standing">Standing</span>`;
+            return `<span class="posture-chip posture-uncertain">${p}</span>`;
+        };
+
+        const feedChip = (f) => {
+            const label = (f||'').replace('_Behaviour','').replace('_',' ') || f;
+            if (f === 'Feeding_Behaviour') return `<span class="feed-chip feed-feeding">Feeding</span>`;
+            if (f === 'Idle_Behaviour') return `<span class="feed-chip feed-idle">Idle</span>`;
+            return `<span class="posture-chip posture-uncertain">${label}</span>`;
+        };
+
+        const rows = history.slice(0, 200).map(h => `
+            <tr>
+                <td>${escapeHtml(h.timestamp || '—')}</td>
+                <td>${escapeHtml((h.camera_id || '').toUpperCase() || '—')}</td>
+                <td>${postureChip(h.posture)}</td>
+                <td>${feedChip(h.feeding)}</td>
+                <td>${h.duration || 60}s</td>
+            </tr>
+        `).join('');
+
+        body.innerHTML = `
+            <div class="modal-grid" style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                <div class="modal-chart-pane" style="flex: 1; min-width: 240px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0, 92, 83, 0.03); border: 1px solid var(--border); border-radius: 12px; padding: 1rem;">
+                    <h3 style="font-size: 0.8rem; font-weight: 800; color: var(--teal); margin-bottom: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;">Behavior Breakdown</h3>
+                    <div style="width: 100%; max-width: 200px; aspect-ratio: 1; position: relative;">
+                        <canvas id="historyDoughnutChart"></canvas>
+                    </div>
+                </div>
+                <div class="modal-table-pane" style="flex: 1.6; min-width: 320px; display: flex; flex-direction: column; overflow: hidden;">
+                    <p style="font-size:0.7rem;color:var(--text-muted);margin-bottom:0.75rem;">
+                        Showing ${Math.min(history.length, 200)} of ${history.length} records (most recent first)
+                    </p>
+                    <div class="history-table-wrap" style="max-height: 300px; overflow-y: auto;">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Camera</th>
+                                    <th>Posture</th>
+                                    <th>Feeding</th>
+                                    <th>Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        if (historyChartInstance) {
+            historyChartInstance.destroy();
+        }
+
+        const ctx = document.getElementById('historyDoughnutChart').getContext('2d');
+        historyChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Lying', 'Standing', 'Feeding', 'Idle'],
+                datasets: [{
+                    data: [lyingSec, standingSec, feedingSec, idleSec],
+                    backgroundColor: ['#EF9A9A', '#A5D6A7', '#007A6F', '#FFCC80'],
+                    borderColor: '#ffffff',
+                    borderWidth: 2,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 10,
+                            padding: 8,
+                            font: { size: 9, family: 'Inter' },
+                            color: '#3a5652'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const val = context.raw;
+                                const hrs = Math.floor(val / 3600);
+                                const mins = Math.floor((val % 3600) / 60);
+                                const secs = val % 60;
+                                return ` ${context.label}: ${hrs}h ${mins}m ${secs}s`;
+                            }
+                        }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+    }
+
+    function closeHistoryModal(event) {
+        if (event && event.target !== document.getElementById('history-modal-overlay')) return;
+        const overlay = document.getElementById('history-modal-overlay');
+        overlay.classList.remove('open');
+        setTimeout(() => { 
+            overlay.style.display = 'none'; 
+            if (historyChartInstance) {
+                historyChartInstance.destroy();
+                historyChartInstance = null;
+            }
+        }, 260);
+    }
+
+    // ── Export CSV ─────────────────────────────────────
+    function exportCattle(cattleId, event) {
+        if (event) event.stopPropagation();
+        const a = document.createElement('a');
+        a.href = `/api/cattle/${encodeURIComponent(cattleId)}/export`;
+        a.download = `cattle_${cattleId}_history.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+</script>
+</body>
+</html>

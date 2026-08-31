@@ -1,0 +1,26 @@
+name: kisan_cattlevision_mobile
+description: A beautiful, real-time cattle monitoring mobile application connecting through AWS EC2.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  http: ^0.13.6
+  flutter_mjpeg: ^2.0.4
+  intl: ^0.18.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+dependency_overrides:
+  flutter_hooks: 0.20.5
+

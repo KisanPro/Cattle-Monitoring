@@ -1,0 +1,11 @@
+# YOLO Dataset Configuration for Cattle Ear Tag Detection
+# Relative path from project root or dataset root
+
+path: dataset  # dataset root dir (relative to project root when running ultralytics)
+train: train/images
+val: val/images
+test: test/images
+
+nc: 1
+names:
+  0: ear_tag

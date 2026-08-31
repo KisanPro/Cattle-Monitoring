@@ -1,0 +1,35 @@
+# Core Edge AI Pipeline & Models
+ultralytics>=8.0.0
+easyocr>=1.6.0
+facenet-pytorch>=2.5.0
+timm>=0.9.0
+chromadb>=0.4.0
+
+# PyTorch Deep Learning
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Scientific & Data Processing
+numpy>=1.22.0
+pandas>=1.5.0
+scipy>=1.10.0
+scikit-learn>=1.2.0
+matplotlib>=3.7.0
+
+# API & Web App Server (FastAPI)
+fastapi>=0.95.0
+uvicorn>=0.22.0
+jinja2>=3.1.0
+websockets>=11.0
+
+# Cloud Synchronizer & Connection Client
+boto3>=1.26.0
+python-dotenv>=1.0.0
+
+# Networking & Timezones
+requests>=2.28.0
+pytz>=2023.3
+
+# Image Processing
+opencv-python>=4.7.0
+Pillow>=9.5.0

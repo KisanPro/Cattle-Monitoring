@@ -1,0 +1,25 @@
+# 🧠 Kisan Intelligence Hub (HPC) - Python Dependencies
+
+# Core Web Framework & Server
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
+pydantic>=2.6.0
+pydantic-settings>=2.2.0
+python-dotenv>=1.0.0
+python-multipart>=0.0.9
+
+# Deep Learning & Machine Learning
+torch>=2.2.0
+torchvision>=0.17.0
+numpy>=1.24.0
+
+# System Diagnostics & Telemetry
+psutil>=5.9.0
+
+# Networking & HTTP Clients
+requests>=2.31.0
+urllib3>=2.0.0
+
+# Automated Documentation & Image Generation
+python-docx>=1.1.0
+Pillow>=10.2.0

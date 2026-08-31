@@ -1,0 +1,7 @@
+{
+    "ec2_url": "http://54.235.107.116:8080",
+    "forward_cameras": ["cam1", "cam2", "cam3"],
+    "forward_interval_sec": 0.1,
+    "status_interval_sec": 2.0,
+    "api_key": "kisan_secure_token_2026"
+}
