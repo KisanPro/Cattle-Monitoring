@@ -17,8 +17,6 @@ src/runs/
 
 # Testing and temporary output results (exclude generated images, keep dirs)
 output/test_run/
-output/results/*
-!output/results/.gitkeep
 testing_results/predict/*
 
 # Environments
