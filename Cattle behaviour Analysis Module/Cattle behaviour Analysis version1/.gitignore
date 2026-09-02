@@ -10,6 +10,8 @@ build/
 # Ignore massive training datasets (hosted on Google Drive or locally on F:)
 dataset/
 Dataset/
+!**/dataset/README.md
+!**/Dataset/README.md
 runs/
 
 # Ignore heavy PyTorch model weights checkpoints
