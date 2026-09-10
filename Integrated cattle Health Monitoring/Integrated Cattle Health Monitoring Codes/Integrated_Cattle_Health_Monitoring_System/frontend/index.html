@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integrated AI Cattle Health Monitoring System | KisanPro</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js for synchronized multi-variable time-series rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="brand">
+                <i data-lucide="activity" class="brand-icon"></i>
+                <div>
+                    <h1>Integrated AI Cattle Health Monitoring System</h1>
+                    <p class="subtitle">Multi-Variable Health Intelligence Layer (Milk • Weight • Vaccination)</p>
+                </div>
+            </div>
+            <div class="farm-badge">
+                <div class="farm-info">
+                    <span class="label">ACTIVE FARM</span>
+                    <strong id="farm-id-display">8088032780_Samruddhi_Farm</strong>
+                </div>
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span>AI Engine Online</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Cattle Selection Toolbar -->
+        <section class="selection-bar">
+            <div class="select-group">
+                <label for="cattle-select"><i data-lucide="shield"></i> Select Cattle ID:</label>
+                <select id="cattle-select">
+                    <option value="KA-1989" selected>KA-1989 — Geetha (HF Cow - Case Study)</option>
+                    <option value="KA-1021">KA-1021 — Lakshmi (Gir Cow - Healthy Reference)</option>
+                    <option value="KA-3045">KA-3045 — Ganga (Hallikar Cow)</option>
+                </select>
+            </div>
+            <div class="quick-stats">
+                <div class="stat-pill">
+                    <span>Breed:</span> <strong id="cattle-breed">HF</strong>
+                </div>
+                <div class="stat-pill">
+                    <span>Age:</span> <strong id="cattle-age">4 Years</strong>
+                </div>
+                <div class="stat-pill">
+                    <span>Source APKs:</span> <strong>3 Connected</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Health Status & Early Warning Alert Banner -->
+        <section id="alert-banner-container" class="alert-banner-section">
+            <!-- Rendered dynamically by app.js -->
+        </section>
+
+        <!-- KPI Metric Cards Grid -->
+        <section class="kpi-grid">
+            <div class="kpi-card milk-kpi">
+                <div class="kpi-header">
+                    <i data-lucide="droplet" class="icon milk-icon"></i>
+                    <span>Milk Production</span>
+                </div>
+                <div class="kpi-value" id="kpi-milk-val">-- L</div>
+                <div class="kpi-subtext" id="kpi-milk-sub">7-day Trend: --%</div>
+                <div class="source-tag">From: Milk Monitoring APK</div>
+            </div>
+
+            <div class="kpi-card weight-kpi">
+                <div class="kpi-header">
+                    <i data-lucide="scale" class="icon weight-icon"></i>
+                    <span>Body Weight</span>
+                </div>
+                <div class="kpi-value" id="kpi-weight-val">-- kg</div>
+                <div class="kpi-subtext" id="kpi-weight-sub">7-day Trend: --%</div>
+                <div class="source-tag">From: Weight Monitoring APK</div>
+            </div>
+
+            <div class="kpi-card vaccine-kpi">
+                <div class="kpi-header">
+                    <i data-lucide="syringe" class="icon vaccine-icon"></i>
+                    <span>Vaccination Status</span>
+                </div>
+                <div class="kpi-value" id="kpi-vaccine-val">--</div>
+                <div class="kpi-subtext" id="kpi-vaccine-sub">Immunity Window: --</div>
+                <div class="source-tag">From: Vaccination APK</div>
+            </div>
+
+            <div class="kpi-card score-kpi">
+                <div class="kpi-header">
+                    <i data-lucide="heart-pulse" class="icon health-icon"></i>
+                    <span>AI Composite Health Score</span>
+                </div>
+                <div class="kpi-value" id="kpi-score-val">-- / 100</div>
+                <div class="kpi-subtext" id="kpi-score-level">Risk Level: --</div>
+                <div class="source-tag">AI Multi-Variable Classifier</div>
+            </div>
+        </section>
+
+        <!-- Synchronized Time-Series Chart Section -->
+        <section class="chart-section">
+            <div class="section-header">
+                <div>
+                    <h2><i data-lucide="trending-up"></i> Synchronized Multi-Parameter Health Trajectory</h2>
+                    <p>Correlated timeline of Daily Milk Yield (Liters) vs. Body Weight (kg) vs. Vaccination Milestones</p>
+                </div>
+                <div class="chart-legend-custom">
+                    <span class="legend-item"><span class="dot milk-dot"></span> Milk (L)</span>
+                    <span class="legend-item"><span class="dot weight-dot"></span> Weight (kg)</span>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="healthTimelineChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Detailed AI Assessment & Recommended Action Grid -->
+        <section class="details-grid">
+            <div class="details-card observation-card">
+                <h3><i data-lucide="cpu"></i> AI Clinical Observations & Etiology</h3>
+                <div id="ai-observations-content" class="content-box">
+                    Loading observations...
+                </div>
+                <div class="hypotheses-box">
+                    <h4>Potential Risk Factors / Differentials:</h4>
+                    <ul id="hypotheses-list">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+            </div>
+
+            <div class="details-card action-card">
+                <h3><i data-lucide="clipboard-check"></i> Actionable Veterinary Recommendations</h3>
+                <div id="ai-actions-content" class="content-box">
+                    Loading actions...
+                </div>
+                <div class="disclaimer-box">
+                    <i data-lucide="alert-circle"></i>
+                    <p id="disclaimer-text">The AI system is identifying a health risk, not providing a definitive veterinary diagnosis.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Simulation & Ingestion Live Testing Console -->
+        <section class="simulator-section">
+            <div class="section-header">
+                <div>
+                    <h2><i data-lucide="send"></i> Independent APK Data Ingestion Simulator</h2>
+                    <p>Simulate live daily data submissions coming from the 3 independent mobile APKs</p>
+                </div>
+            </div>
+            <div class="simulator-grid">
+                <!-- Milk Ingestion Box -->
+                <form id="milk-sim-form" class="sim-card">
+                    <h4><i data-lucide="droplet"></i> Milk APK Ingest</h4>
+                    <div class="input-group">
+                        <label>Quantity (Liters):</label>
+                        <input type="number" id="sim-milk-qty" step="0.1" value="11.2" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Shift:</label>
+                        <select id="sim-milk-shift">
+                            <option value="morning">Morning</option>
+                            <option value="evening">Evening</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-milk">Submit Milk Record</button>
+                </form>
+
+                <!-- Weight Ingestion Box -->
+                <form id="weight-sim-form" class="sim-card">
+                    <h4><i data-lucide="scale"></i> Weight APK Ingest</h4>
+                    <div class="input-group">
+                        <label>Estimated Weight (kg):</label>
+                        <input type="number" id="sim-weight-val" step="0.5" value="437.0" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Body Condition (BCS):</label>
+                        <input type="number" id="sim-bcs-val" step="0.25" value="2.5">
+                    </div>
+                    <button type="submit" class="btn btn-weight">Submit Weight Record</button>
+                </form>
+
+                <!-- Vaccination Ingestion Box -->
+                <form id="vac-sim-form" class="sim-card">
+                    <h4><i data-lucide="syringe"></i> Vaccination APK Ingest</h4>
+                    <div class="input-group">
+                        <label>Vaccine Administered:</label>
+                        <input type="text" id="sim-vac-name" value="NADCP FMD Trivalent Booster" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Next Booster Due Date:</label>
+                        <input type="date" id="sim-vac-due" value="2027-03-04" required>
+                    </div>
+                    <button type="submit" class="btn btn-vac">Submit Vaccine Update</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>© 2026 KisanPro • Integrated AI Cattle Health Monitoring and Early-Warning Layer</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

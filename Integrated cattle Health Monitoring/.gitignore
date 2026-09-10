@@ -1,0 +1,31 @@
+# Flutter build and cache
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Android Gradle cache
+.gradle/
+local.properties
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+env/
+venv/
+
+# Large installer binaries exceeding GitHub 100MB limit
+KisanPro Unified.apk
+vaccination_monitoring.apk
+app-debug.apk
+
+# Large media files exceeding GitHub 100MB limit
+Cattle Health Monitoring video.mp4
+
+# IDE files
+.idea/
+.vscode/
+*.iml

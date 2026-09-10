@@ -1,0 +1,126 @@
+
+--- line 178 ---
+163:         
+164:     # 4. Beef Cattle
+165:     if "beef" in s or "horqin" in b:
+166:         return 152.9
+167:         
+168:     return 130.0
+169: 
+170: 
+171: def predict_weight(side_img_bgr, back_img_bgr, known_obl_cm=None,
+172:                    known_wh_cm=None, known_hg_cm=None, known_hl_cm=None,
+173:                    section="Beef Cattle", breed="Horqin", calf_months=None):
+174:     """
+175:     Core prediction function.
+176:     Uses:
+177:       - Schaeffer's Formula for Calves (dynamic scaling).
+178:       - Agarwal's Formula for Buffalo / Draft.
+179:       - Extra Trees regressor (17-feature model) for Dairy and Beef Cattle.
+180:     """
+181:     # ── 1. Detect keypoints ────────────────────────────────────────────────────
+182:     py_side = get_pyramid(side_img_bgr)
+183:     py_back = get_pyramid(back_img_bgr)
+184: 
+185:     with torch.no_grad():
+186:         pts_s = kp_side_model(py_side).cpu().numpy()[0]   # (7, 2)
+187:         pts_b = kp_back_model(py_back).cpu().numpy()[0]   # (2, 2)
+188: 
+189:     # ── 2. Compute OBL from keypoints + calibration ────────────────────────────
+190:     A, B = pts_s[0], pts_s[1]
+191:     pixel_OBL = euc(A, B)
+192: 
+193:     # Default ratio fallback
+194:     AVG_RATIO = 1.2782
+195:     avg_ratio_path = os.path.join(PROJECT_ROOT, "models", "weight_weights", "avg_ratio.json")
+196:     if os.path.exists(avg_ratio_path):
+197:         try:
+198:             with open(avg_ratio_path, "r") as f:
+199:                 AVG_RATIO = json.load(f).get("avg_obl_ratio", 1.2782)
+200:         except Exception:
+201:             pass
+202: 
+
+--- line 264 ---
+249:         "OBL_cm": round(OBL, 1),
+250:         "WH_cm":  round(WH, 1),
+251:         "HL_cm":  round(HL, 1),
+252:         "HG_cm":  round(HG, 1),
+253:     }
+254: 
+255:     # ── 4. Route Weight Estimation Model / Formula ────────────────────────────
+256:     is_draft = section in ["Buffalo / Draft", "Draft"] or breed in ["HalliKar", "Deoni", "Ongole", "Bargur"]
+257:     
+258:     if section == "Calf":
+259:         # Calf: Schaeffer's Formula (metric constant 10815)
+260:         # Weight (kg) = (Length_cm * Girth_cm^2) / 10815
+261:         predicted_weight = (OBL * (HG ** 2)) / 10815.0
+262:         model_name = "Schaeffer-Formula-10815"
+263:     elif is_draft:
+264:         # Buffalo / Draft: Agarwal's Formula (weight in kg, using inches/metric conversion)
+265:         L_in = OBL / 2.54
+266:         G_in = HG / 2.54
+267:         if G_in < 65:
+268:             Y = 9.0
+269:         elif G_in <= 80:
+270:             Y = 8.5
+271:         else:
+272:             Y = 8.0
+273:         predicted_weight = (G_in * L_in) / Y
+274:         model_name = f"Agarwal-Formula-Y{Y}"
+275:     else:
+276:         # Dairy and Beef adults: Extra Trees Regressor (17-feature model)
+277:         feats = build_17_features(OBL, WH, HG, HL, section)
+278:         log_pred = weight_regressor.predict([feats])[0]
+279:         predicted_weight = float(np.exp(log_pred))
+280:         model_name = "ExtraTrees-17feat-logY"
+281: 
+282:     # Confidence range: ±5%
+283:     confidence_low  = round(predicted_weight * 0.95, 1)
+284:     confidence_high = round(predicted_weight * 1.05, 1)
+285: 
+286:     user_measurements = sum([
+287:         1 if (known_wh_cm and float(known_wh_cm) > 0) else 0,
+288:         1 if (known_hg_cm and float(known_hg_cm) > 0) else 0,
+
+--- line 274 ---
+259:         # Calf: Schaeffer's Formula (metric constant 10815)
+260:         # Weight (kg) = (Length_cm * Girth_cm^2) / 10815
+261:         predicted_weight = (OBL * (HG ** 2)) / 10815.0
+262:         model_name = "Schaeffer-Formula-10815"
+263:     elif is_draft:
+264:         # Buffalo / Draft: Agarwal's Formula (weight in kg, using inches/metric conversion)
+265:         L_in = OBL / 2.54
+266:         G_in = HG / 2.54
+267:         if G_in < 65:
+268:             Y = 9.0
+269:         elif G_in <= 80:
+270:             Y = 8.5
+271:         else:
+272:             Y = 8.0
+273:         predicted_weight = (G_in * L_in) / Y
+274:         model_name = f"Agarwal-Formula-Y{Y}"
+275:     else:
+276:         # Dairy and Beef adults: Extra Trees Regressor (17-feature model)
+277:         feats = build_17_features(OBL, WH, HG, HL, section)
+278:         log_pred = weight_regressor.predict([feats])[0]
+279:         predicted_weight = float(np.exp(log_pred))
+280:         model_name = "ExtraTrees-17feat-logY"
+281: 
+282:     # Confidence range: ±5%
+283:     confidence_low  = round(predicted_weight * 0.95, 1)
+284:     confidence_high = round(predicted_weight * 1.05, 1)
+285: 
+286:     user_measurements = sum([
+287:         1 if (known_wh_cm and float(known_wh_cm) > 0) else 0,
+288:         1 if (known_hg_cm and float(known_hg_cm) > 0) else 0,
+289:         1 if (known_hl_cm and float(known_hl_cm) > 0) else 0,
+290:     ])
+291: 
+292:     return {
+293:         "predicted_weight_kg": round(predicted_weight, 1),
+294:         "confidence_range": [max(0, confidence_low), confidence_high],
+295:         "measurements": measurements,
+296:         "calibration_ratio": round(ratio, 4),
+297:         "calibration_mode": "user_provided" if known_obl_cm else "auto_average",
+298:         "user_measurements_provided": user_measurements,
