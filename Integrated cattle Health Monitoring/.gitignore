@@ -17,6 +17,11 @@ __pycache__/
 env/
 venv/
 
+# Temporary Microsoft Office lock files
+~$*.docx
+~$*.xlsx
+~$*.pptx
+
 # Large installer binaries exceeding GitHub 100MB limit
 KisanPro Unified.apk
 vaccination_monitoring.apk
