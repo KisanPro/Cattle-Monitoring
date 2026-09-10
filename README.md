@@ -227,52 +227,6 @@ sequenceDiagram
     Cloud-->>App: Consolidated Animal Health Profile & Alerts
 ```
 
----
-
-## Deployment & Setup Guide
-
-### 1. Global Python Environment Setup
-```bash
-# Clone the repository
-git clone https://github.com/KisanPro/Cattle-Monitoring.git
-cd Cattle-Monitoring
-
-# Install backend dependencies
-pip install -r "Integrated cattle Health Monitoring/requirements.txt"
-```
-
-### 2. Cloud Microservice Deployment (AWS EC2)
-```bash
-# Start Milk Monitoring REST Service
-cd "Milk Monitoring/Milk Monitoring version3/cattle_milk_monitoring code/backend"
-python -m uvicorn main:app --host 0.0.0.0 --port 8082
-
-# Start 3D Weight Estimation Gateway
-cd "Integrated cattle Health Monitoring/Integrated Cattle Health Monitoring Codes/Combined_Weight_Monitoring/cloud_gateway"
-gunicorn -w 4 -b 0.0.0.0:5000 app:app
-```
-
-### 3. Local GPU Inference Worker Setup
-```bash
-# Launch Keypoint Detection Worker
-cd "Integrated cattle Health Monitoring/Integrated Cattle Health Monitoring Codes/Combined_Weight_Monitoring/local_pc_worker"
-python worker.py
-```
-
-### 4. Edge Vision Pipeline (NVIDIA Jetson)
-```bash
-# Launch Edge Cattle Behaviour and Tag Pipeline
-cd "Cattle behaviour Analysis Module/Cattle behaviour Analysis version1/Cattle Behaviour Monitoring/Cattle Behaviour analysis Jetson version"
-python jetson_pipeline.py
-```
-
-### 5. Unified Mobile Client Build
-```bash
-# Build release APK for Android
-cd "Integrated cattle Health Monitoring/Integrated Cattle Health Monitoring Codes/kisanpro_unified_app"
-flutter pub get
-flutter build apk --release
-```
 
 ---
 
